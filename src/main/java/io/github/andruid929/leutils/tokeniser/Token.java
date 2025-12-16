@@ -3,17 +3,18 @@ package io.github.andruid929.leutils.tokeniser;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public final class Tokeniser {
+public final class Token {
 
     private final List<String> arguments;
 
     private final StringBuilder argumentBuilder;
 
-    private Tokeniser(@NotNull String input) {
+    private Token(@NotNull String input) {
         arguments = new ArrayList<>();
 
         argumentBuilder = new StringBuilder();
@@ -65,8 +66,8 @@ public final class Tokeniser {
     }
 
     @Contract("_ -> new")
-    public static @NotNull Tokeniser tokenise(@NotNull String input) {
-        return new Tokeniser(input);
+    public static @NotNull Token tokenise(@NotNull String input) {
+        return new Token(input);
     }
 
     public List<String> getArguments() {
@@ -81,6 +82,26 @@ public final class Tokeniser {
         return arguments.isEmpty();
     }
 
+    public String getArgument(int index) {
+        return arguments.get(index);
+    }
+
+    public String getFirstArgument() {
+        return arguments.get(0);
+    }
+
+    public String getLastArgument() {
+        return arguments.get(arguments.size() - 1);
+    }
+
+    public boolean hasArguments(int numberOfDesiredArguments) {
+        return arguments.size() == numberOfDesiredArguments;
+    }
+
+    public @NotNull Path getPathFromArgument(int index) {
+        return Path.of(arguments.get(index));
+    }
+
     @Contract(pure = true)
     private boolean builderHasData() {
         return argumentBuilder.length() != 0;
@@ -89,8 +110,8 @@ public final class Tokeniser {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Tokeniser tokeniser = (Tokeniser) o;
-        return Objects.equals(arguments, tokeniser.arguments);
+        Token token = (Token) o;
+        return Objects.equals(arguments, token.arguments);
     }
 
     @Override
@@ -100,6 +121,6 @@ public final class Tokeniser {
 
     @Override
     public String toString() {
-        return "Tokeniser{" + "arguments=" + arguments + '}';
+        return "Token{" + "arguments=" + arguments + '}';
     }
 }

@@ -22,7 +22,6 @@ public final class Token {
         boolean insideQuotes = false;
 
         {
-
             for (char c : input.trim().toCharArray()) {
 
                 if (c == '"') {

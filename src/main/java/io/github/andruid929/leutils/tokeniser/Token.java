@@ -11,22 +11,22 @@ import java.util.Objects;
 /**
  * Collects space-separated arguments in a String.
  *
- * @since 1.0
  * @author Andrew Jones
  * @see UnclosedQuoteException
- * */
+ * @since 1.0
+ */
 
 public final class Token {
 
     /**
      * List of arguments in the given String.
-     * */
+     */
 
     private final List<String> arguments;
 
     /**
      * Argument string builder.
-     * */
+     */
 
     private final StringBuilder argumentBuilder;
 
@@ -34,7 +34,7 @@ public final class Token {
      * Instantiate arguments list and builder and collect arguments from the String.
      *
      * @param input the String to collect argument from.
-     * */
+     */
 
     private Token(@NotNull String input) {
         arguments = new ArrayList<>();
@@ -97,8 +97,9 @@ public final class Token {
      * {@code [mkdir, location/of folder, dup, existing]}.
      *
      * @param input the String to collect arguments from.
+     * @return a token object.
      * @throws UnclosedQuoteException if the {@code input} has unclosed double quotes.
-     * */
+     */
 
     @Contract("_ -> new")
     public static @NotNull Token tokenise(@NotNull String input) {
@@ -109,7 +110,7 @@ public final class Token {
      * Get the arguments present in the specified String.
      *
      * @return List of arguments as Strings.
-     * */
+     */
 
     public List<String> getArguments() {
         return arguments;
@@ -120,7 +121,7 @@ public final class Token {
      * This is the equivalent of calling {@code getArguments().size()}.
      *
      * @return number of arguments in the specified String.
-     * */
+     */
 
     public int getNumberOfArguments() {
         return arguments.size();
@@ -131,7 +132,7 @@ public final class Token {
      * This is the equivalent of calling {@code getArguments().isEmpty()}.
      *
      * @return {@code true} if the String contains no arguments, otherwise {@code false}.
-     * */
+     */
 
     public boolean hasNoArguments() {
         return arguments.isEmpty();
@@ -140,9 +141,10 @@ public final class Token {
     /**
      * Get the argument at the specified index.
      *
+     * @param index the index to get the desired argument from.
      * @return the argument at given index if any.
      * @throws IndexOutOfBoundsException if the {@code index} doesn't exist.
-     * */
+     */
 
     public String getArgument(int index) {
         return arguments.get(index);
@@ -153,7 +155,7 @@ public final class Token {
      *
      * @return the first argument if any;
      * @throws IndexOutOfBoundsException if {@link #hasNoArguments()} returns true;
-     * */
+     */
 
     public String getFirstArgument() {
         return arguments.get(0);
@@ -164,7 +166,7 @@ public final class Token {
      *
      * @return the last argument if any;
      * @throws IndexOutOfBoundsException if {@link #hasNoArguments()} returns true;
-     * */
+     */
 
     public String getLastArgument() {
         return arguments.get(arguments.size() - 1);
@@ -173,8 +175,9 @@ public final class Token {
     /**
      * Checks if the number of arguments found matches the given number.
      *
+     * @param numberOfDesiredArguments the number of arguments to check against.
      * @return {@code true} if {@code numberOfDesiredArguments} matches {@link #getNumberOfArguments()}.
-     * */
+     */
 
     public boolean hasArguments(int numberOfDesiredArguments) {
         return arguments.size() == numberOfDesiredArguments;
@@ -183,10 +186,12 @@ public final class Token {
     /**
      * Constructs a path from a specified argument.<br>
      * This method is useful if the argument needed is to be used for I/O purposes.
+     * <p>
+     * <strong>Note:</strong> this method does not check if the argument is a valid path so make sure you validate the path.
      *
+     * @param index the index of the arguments that is expected to be a path.
      * @return a path pointing to the location specified by the argument;
-     * @apiNote this method does not check if the argument is a valid path so make sure you validate the path.
-     * */
+     */
 
     public @NotNull Path getPathFromArgument(int index) {
         return Path.of(arguments.get(index));
@@ -196,7 +201,7 @@ public final class Token {
      * Checks to see if the argument builder is empty.
      *
      * @return {@code true} if the builder is not empty.
-     * */
+     */
 
     @Contract(pure = true)
     private boolean builderHasData() {

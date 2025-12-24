@@ -25,17 +25,6 @@ public final class ErrorMessageHandler {
     }
 
     public static void printSimpleErrorMessage(@NotNull Exception e, @NotNull PrintStream printStream) {
-        printStream.println(simpleErrorMessage(e));
-        printStream.close();
-    }
-
-    public static void printSimpleErrorMessage(@NotNull Exception e, @NotNull PrintStream printStream, boolean newLine) {
-        if (newLine) {
-            printStream.println(simpleErrorMessage(e));
-        } else {
-            printStream.print(simpleErrorMessage(e));
-        }
-
-        printStream.close();
+        printStream.print(simpleErrorMessage(e));
     }
 }

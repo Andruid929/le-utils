@@ -118,6 +118,14 @@ public final class Token {
         return arguments;
     }
 
+    /**
+     * Get flags present, if any.
+     * <p>
+     * Flags are arguments that start with a single dash (-).
+     *
+     * @return List of flags as Strings.
+     * */
+
     public List<String> getFlags() {
         return getArguments()
                 .stream()
@@ -128,6 +136,14 @@ public final class Token {
                 })
                 .collect(Collectors.toList());
     }
+
+    /**
+     * Get options present, if any.
+     * <p>
+     * Options are arguments that start with a double dash (--).
+     *
+     * @return List of options as Strings.
+     * */
 
     public List<String> getOptions() {
         return getArguments()

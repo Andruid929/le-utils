@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Collects space-separated arguments in a String.
@@ -116,6 +118,24 @@ public final class Token {
         return arguments;
     }
 
+    public List<String> getFlags() {
+        return getArguments()
+                .stream()
+                .filter(argument -> {
+                    Pattern pattern = Pattern.compile("^(?<!-)-[A-Za-z]"); //Single dash followed by a letter
+
+                    return pattern.matcher(argument).find();
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<String> getOptions() {
+        return getArguments()
+                .stream()
+                .filter(argument -> argument.startsWith("--"))
+                .collect(Collectors.toList());
+    }
+
     /**
      * Get the number of arguments found.<br>
      * This is the equivalent of calling {@code getArguments().size()}.
@@ -222,6 +242,6 @@ public final class Token {
 
     @Override
     public String toString() {
-        return "Token{" + "arguments=" + arguments + '}';
+        return "Token" + arguments;
     }
 }

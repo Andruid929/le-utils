@@ -189,7 +189,7 @@ public final class Token {
     /**
      * Get the first argument found;
      *
-     * @return the first argument if any;
+     * @return the first argument, if any;
      * @throws IndexOutOfBoundsException if {@link #hasNoArguments()} returns true;
      */
 
@@ -221,9 +221,9 @@ public final class Token {
 
     /**
      * Constructs a path from a specified argument.<br>
-     * This method is useful if the argument needed is to be used for I/O purposes.
+     * This method is useful if the argument needed is to be used for I/O.
      * <p>
-     * <strong>Note:</strong> this method does not check if the argument is a valid path so make sure you validate the path.
+     * <strong>Note:</strong> this method does not check if the argument is a valid path, so make sure you validate the path.
      *
      * @param index the index of the arguments that is expected to be a path.
      * @return a path pointing to the location specified by the argument;

@@ -2,11 +2,13 @@ package io.github.andruid929.leutils.tokeniser;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * Collects space-separated arguments in a String.
@@ -117,6 +119,38 @@ public final class Token {
     }
 
     /**
+     * Get flags present, if any.
+     * <p>
+     * Flags are arguments that start with a single dash (-).
+     *
+     * @return List of flags as Strings.
+     * */
+
+    public @NotNull @Unmodifiable List<String> getFlags() {
+        Pattern pattern = Pattern.compile("^(?<!-)-[A-Za-z]"); //Single dash followed by a letter
+
+        return getArguments()
+                .stream()
+                .filter(argument -> pattern.matcher(argument).find())
+                .toList();
+    }
+
+    /**
+     * Get options present, if any.
+     * <p>
+     * Options are arguments that start with a double dash (--).
+     *
+     * @return List of options as Strings.
+     * */
+
+    public @NotNull @Unmodifiable List<String> getOptions() {
+        return getArguments()
+                .stream()
+                .filter(argument -> argument.startsWith("--"))
+                .toList();
+    }
+
+    /**
      * Get the number of arguments found.<br>
      * This is the equivalent of calling {@code getArguments().size()}.
      *
@@ -153,12 +187,12 @@ public final class Token {
     /**
      * Get the first argument found;
      *
-     * @return the first argument if any;
+     * @return the first argument, if any;
      * @throws IndexOutOfBoundsException if {@link #hasNoArguments()} returns true;
      */
 
     public String getFirstArgument() {
-        return arguments.get(0);
+        return arguments.getFirst();
     }
 
     /**
@@ -169,7 +203,7 @@ public final class Token {
      */
 
     public String getLastArgument() {
-        return arguments.get(arguments.size() - 1);
+        return arguments.getLast();
     }
 
     /**
@@ -185,9 +219,9 @@ public final class Token {
 
     /**
      * Constructs a path from a specified argument.<br>
-     * This method is useful if the argument needed is to be used for I/O purposes.
+     * This method is useful if the argument needed is to be used for I/O.
      * <p>
-     * <strong>Note:</strong> this method does not check if the argument is a valid path so make sure you validate the path.
+     * <strong>Note:</strong> this method does not check if the argument is a valid path, so make sure you validate the path.
      *
      * @param index the index of the arguments that is expected to be a path.
      * @return a path pointing to the location specified by the argument;
@@ -205,7 +239,7 @@ public final class Token {
 
     @Contract(pure = true)
     private boolean builderHasData() {
-        return argumentBuilder.length() != 0;
+        return !argumentBuilder.isEmpty();
     }
 
     @Override
@@ -222,6 +256,6 @@ public final class Token {
 
     @Override
     public String toString() {
-        return "Token{" + "arguments=" + arguments + '}';
+        return "Token" + arguments;
     }
 }

@@ -1,7 +1,5 @@
-package io.github.andruid929.leutils;
+package io.github.andruid929.leutils.tokeniser;
 
-import io.github.andruid929.leutils.tokeniser.Token;
-import io.github.andruid929.leutils.tokeniser.UnclosedQuoteException;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
@@ -10,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TokenTest {
 
-    private final Token token = Token.tokenise("--d \"src\\main\\resources\" world \"Write Once Run Anywhere\"");
+    private final Token token = Token.tokenise("--d \"src\\main\\resources\" world \"Write Once Run Anywhere\" -t");
 
     @Test
     void getArgumentsTest() {
@@ -19,7 +17,7 @@ class TokenTest {
 
     @Test
     void getNumberOfArgumentsTest() {
-        assertEquals(4, token.getNumberOfArguments());
+        assertEquals(5, token.getNumberOfArguments());
     }
 
     @Test
@@ -34,7 +32,7 @@ class TokenTest {
 
     @Test
     void hasArgumentsTest() {
-        assertTrue(token.hasArguments(4));
+        assertTrue(token.hasArguments(5));
     }
 
     @Test
@@ -49,7 +47,7 @@ class TokenTest {
 
     @Test
     void getLastArgumentTest() {
-        assertEquals("Write Once Run Anywhere", token.getLastArgument());
+        assertEquals("-t", token.getLastArgument());
     }
 
     @Test
@@ -58,9 +56,21 @@ class TokenTest {
     }
 
     @Test
+    void getFlags() {
+        assertEquals(1, token.getFlags().size());
+    }
+
+    @Test
+    void getOptions() {
+        assertEquals(1, token.getOptions().size());
+    }
+
+    @Test
     void toStringTest() {
         String toStringS = token.toString();
 
-        assertTrue(toStringS.startsWith("Token") && toStringS.endsWith("}"));
+        System.out.println(toStringS);
+
+        assertTrue(toStringS.startsWith("Token") && toStringS.endsWith("]"));
     }
 }

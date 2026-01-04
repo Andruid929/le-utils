@@ -2,13 +2,13 @@ package io.github.andruid929.leutils.tokeniser;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Collects space-separated arguments in a String.
@@ -126,13 +126,13 @@ public final class Token {
      * @return List of flags as Strings.
      * */
 
-    public List<String> getFlags() {
+    public @NotNull @Unmodifiable List<String> getFlags() {
         Pattern pattern = Pattern.compile("^(?<!-)-[A-Za-z]"); //Single dash followed by a letter
 
         return getArguments()
                 .stream()
                 .filter(argument -> pattern.matcher(argument).find())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -143,11 +143,11 @@ public final class Token {
      * @return List of options as Strings.
      * */
 
-    public List<String> getOptions() {
+    public @NotNull @Unmodifiable List<String> getOptions() {
         return getArguments()
                 .stream()
                 .filter(argument -> argument.startsWith("--"))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -192,7 +192,7 @@ public final class Token {
      */
 
     public String getFirstArgument() {
-        return arguments.get(0);
+        return arguments.getFirst();
     }
 
     /**
@@ -203,7 +203,7 @@ public final class Token {
      */
 
     public String getLastArgument() {
-        return arguments.get(arguments.size() - 1);
+        return arguments.getLast();
     }
 
     /**
@@ -239,7 +239,7 @@ public final class Token {
 
     @Contract(pure = true)
     private boolean builderHasData() {
-        return argumentBuilder.length() != 0;
+        return !argumentBuilder.isEmpty();
     }
 
     @Override

@@ -127,13 +127,11 @@ public final class Token {
      * */
 
     public List<String> getFlags() {
+        Pattern pattern = Pattern.compile("^(?<!-)-[A-Za-z]"); //Single dash followed by a letter
+
         return getArguments()
                 .stream()
-                .filter(argument -> {
-                    Pattern pattern = Pattern.compile("^(?<!-)-[A-Za-z]"); //Single dash followed by a letter
-
-                    return pattern.matcher(argument).find();
-                })
+                .filter(argument -> pattern.matcher(argument).find())
                 .collect(Collectors.toList());
     }
 

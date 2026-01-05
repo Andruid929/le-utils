@@ -13,33 +13,40 @@ A lightweight Java utility library providing helpful functions for common repeti
 
 ### String Tokenisation
 
-- **String Tokenizer**: Parse and tokenise strings with quote handling
+- **String Tokeniser**: Parse and tokenise strings with quote handling
     - Respects quoted strings (double quotes)
     - Custom exception handling for unclosed quotes
+
+### Date and Time Utilities
+
+Epoll-based date and time utilities.
+
+- **Time utilities**: Parse and format time strings
+- **Date utilities**: Parse and format date strings
+
 
 ## Requirements
 
 - Java 21 or higher
 - Dependencies:
-    - Gson 2.13.2
     - JetBrains Annotations 26.0.2 (optional)
 
 ## Installation
 
 ### Maven
 
-Add the following dependency to your `pom.xml`:
+In `pom.xml`:
 ```xml
 <dependency>
     <groupId>io.github.andruid929</groupId>
     <artifactId>le-utils</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
 </dependency>
 ```
 
 ### Gradle
 
-Add the following dependency to your `build.gradle`:
+In `build.gradle`:
 ```groovy
-implementation 'io.github.andruid929:le-utils:2.0.0'
+implementation 'io.github.andruid929:le-utils:2.1.0'
 ```

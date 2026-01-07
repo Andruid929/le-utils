@@ -24,6 +24,10 @@ Epoll-based date and time utilities.
 - **Time utilities**: Parse and format time strings
 - **Date utilities**: Parse and format date strings
 
+Time unit conversion.
+
+- Convert between any two time units: milliseconds, seconds, minutes, hours, days
+
 
 ## Requirements
 
@@ -40,7 +44,7 @@ In `pom.xml`:
 <dependency>
     <groupId>io.github.andruid929</groupId>
     <artifactId>le-utils</artifactId>
-    <version>2.1.0</version>
+    <version>2.2.0</version>
 </dependency>
 ```
 
@@ -48,5 +52,5 @@ In `pom.xml`:
 
 In `build.gradle`:
 ```groovy
-implementation 'io.github.andruid929:le-utils:2.1.0'
+implementation 'io.github.andruid929:le-utils:2.2.0'
 ```

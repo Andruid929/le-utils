@@ -97,6 +97,15 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <tags>
+                        <tag>
+                            <name>apiNote</name>
+                            <placement>a</placement>
+                            <head>API Note:</head>
+                        </tag>
+                    </tags>
+                </configuration>
             </plugin>
 
             <plugin>

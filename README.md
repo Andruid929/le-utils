@@ -24,6 +24,10 @@ Epoll-based date and time utilities.
 - **Time utilities**: Parse and format time strings
 - **Date utilities**: Parse and format date strings
 
+Time unit conversion.
+
+- Convert between any two time units: milliseconds, seconds, minutes, hours, days
+
 
 ## Requirements
 

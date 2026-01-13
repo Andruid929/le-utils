@@ -26,11 +26,17 @@ public final class Token {
 
     private final List<String> arguments;
 
+    private final List<String> flags;
+
+    private final List<String> options;
+
     /**
      * Argument string builder.
      */
 
     private final StringBuilder argumentBuilder;
+
+    private static final Pattern FLAGS_PATTERN = Pattern.compile("^(?<!-)-[A-Za-z]"); //Single dash followed by a letter
 
     /**
      * Instantiate arguments list and builder and collect arguments from the String.
@@ -44,10 +50,30 @@ public final class Token {
         argumentBuilder = new StringBuilder();
 
         boolean insideQuotes = false;
+        boolean isEscape = false;
 
         {
             for (char c : input.trim().toCharArray()) {
 
+                if (isEscape && c == '"') {
+                    argumentBuilder.append(c);
+
+                    isEscape = false;
+
+                    continue;
+
+                } else if (isEscape) {
+                    argumentBuilder.append('\\').append(c);
+
+                    isEscape = false;
+
+                    continue;
+                }
+
+                if (c == '\\') {
+                    isEscape = true;
+                    continue;
+                }
                 if (c == '"') {
                     insideQuotes = !insideQuotes;
 
@@ -79,6 +105,10 @@ public final class Token {
             }
         }
 
+        if (isEscape) {
+            argumentBuilder.append('\\');
+        }
+
         if (builderHasData()) { //Any arguments following a quoted argument
             arguments.add(argumentBuilder.toString());
         }
@@ -86,6 +116,14 @@ public final class Token {
         if (insideQuotes) { //If this is true, there is an unclosed quote in the input String
             throw new UnclosedQuoteException(argumentBuilder.toString());
         }
+
+        this.flags = arguments.stream()
+                .filter(argument -> FLAGS_PATTERN.matcher(argument).find())
+                .toList();
+
+        this.options = arguments.stream()
+                .filter(argument -> argument.startsWith("--"))
+                .toList();
     }
 
     /**
@@ -124,15 +162,54 @@ public final class Token {
      * Flags are arguments that start with a single dash (-).
      *
      * @return List of flags as Strings.
-     * */
+     * @implNote For an argument to count as a flag,
+     * it must start with a single dash followed by a letter either uppercase or lowercase.
+     * {@code -2} or {@code -#} are not considered flags in this implementation.
+     *
+     */
 
     public @NotNull @Unmodifiable List<String> getFlags() {
-        Pattern pattern = Pattern.compile("^(?<!-)-[A-Za-z]"); //Single dash followed by a letter
+        return flags;
+    }
 
-        return getArguments()
-                .stream()
-                .filter(argument -> pattern.matcher(argument).find())
-                .toList();
+    /**
+     * Get the flag at the specified index.
+     *
+     * @param index       the index to get from the {@link #getFlags() list of flags}.
+     * @param includeDash choose whether to include the dash or not
+     * @return the flag at the specified index as a String.
+     * @throws IndexOutOfBoundsException if the flags list is empty
+     *                                   or the specified index does not exist.
+     * @implNote A lone dash ({@code -}) does not count as a flag.
+     * @see #getFlagValue(int)
+     * @see #getFlags()
+     */
+
+    public @NotNull String getFlag(int index, boolean includeDash) {
+        String flag = flags.get(index);
+
+        if (includeDash) {
+            return flag;
+        }
+
+        return flag.substring(1);
+    }
+
+    /**
+     * Get the value represented by a flag.
+     * <p>For example, {@code -d} would return {@code d} as the value.</p>
+     *
+     * @param index the index to get from the {@link #getFlags() list of flags}.
+     * @return the value for the flag at the specified index.
+     * @throws IndexOutOfBoundsException if the flags list is empty
+     *                                   or the specified index does not exist.
+     * @implNote A lone dash ({@code -}) does not count as a flag.
+     * @see #getFlag(int, boolean)
+     * @see #getFlags()
+     */
+
+    public char getFlagValue(int index) {
+        return getFlag(index, false).charAt(0);
     }
 
     /**
@@ -140,14 +217,36 @@ public final class Token {
      * <p>
      * Options are arguments that start with a double dash (--).
      *
-     * @return List of options as Strings.
-     * */
+     * @return List of options as Strings or an empty list.
+     * @implNote The options in the returned list include the two dashes.
+     *
+     */
 
     public @NotNull @Unmodifiable List<String> getOptions() {
-        return getArguments()
-                .stream()
-                .filter(argument -> argument.startsWith("--"))
-                .toList();
+        return options;
+    }
+
+    /**
+     * Get an option from the {@link #getOptions() list of options}
+     * and choose whether you want to include the dashes or not.
+     *
+     * @param index         the index to get the option within the options list.
+     * @param includeDashes choose to include the dashes or not.
+     * @return the option at the specified index.
+     * @throws IndexOutOfBoundsException if the {@link #getOptions() options list} is empty
+     *                                   or the specified index does not exist.
+     * @see #getOptions()
+     *
+     */
+
+    public @NotNull String getOption(int index, boolean includeDashes) {
+        String option = getOptions().get(index);
+
+        if (includeDashes) {
+            return option;
+        }
+
+        return option.substring(2);
     }
 
     /**

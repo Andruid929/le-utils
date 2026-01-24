@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -33,7 +32,7 @@ public class TimeUtil {
      * Example: {@code 2025 05, 2026}
      */
 
-    public static final String DATE_FORMAT = "MMMM dd, yyyy";
+    public static final String DATE_FORMAT = "MMMM dd, uuuu";
 
     /**
      * The captured timestamp in epoch milliseconds.
@@ -84,7 +83,7 @@ public class TimeUtil {
      * @return the formatted time string in the UTC timezone.
      */
     public String getTime(String timeFormat) {
-        return getTime(timeFormat, ZoneOffset.UTC);
+        return getTime(timeFormat, ZoneId.systemDefault());
     }
 
     /**
@@ -108,7 +107,7 @@ public class TimeUtil {
      * @return the time formatted as HH:mm:ss.
      */
     public String getActualTime() {
-        return getTime(TIME_FORMAT, ZoneOffset.UTC);
+        return getTime(TIME_FORMAT, ZoneId.systemDefault());
     }
 
     /**
@@ -117,7 +116,7 @@ public class TimeUtil {
      * @return the date formatted as "Month day, Year".
      */
     public String getFullDate() {
-        return getTime(DATE_FORMAT, ZoneOffset.UTC);
+        return getTime(DATE_FORMAT, ZoneId.systemDefault());
     }
 
     /**
@@ -144,7 +143,7 @@ public class TimeUtil {
      * @return the year (e.g. "2024").
      */
     public String getYear() {
-        return getTime("yyyy");
+        return getTime("uuuu");
     }
 
     /**
@@ -180,7 +179,7 @@ public class TimeUtil {
      * @return a Calendar instance set to the captured timestamp.
      */
     public Calendar toCalendar() {
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(ZoneOffset.UTC));
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.systemDefault()));
 
         calendar.setTimeInMillis(getEpochMillis());
 
@@ -195,7 +194,6 @@ public class TimeUtil {
      */
     @Contract(" -> new")
     public static @NotNull TimeUtil captureInstant() {
-
         return new TimeUtil();
     }
 

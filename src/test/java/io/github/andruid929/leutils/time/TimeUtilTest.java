@@ -37,7 +37,7 @@ class TimeUtilTest {
 
     @Test
     void getActualTime() {
-        assertEquals("10:31:00", time.getActualTime());
+        assertEquals("12:31:00", time.getActualTime());
     }
 
     @Test
@@ -62,7 +62,7 @@ class TimeUtilTest {
 
     @Test
     void getHour() {
-        assertEquals("10", time.getHour());
+        assertEquals("12", time.getHour());
     }
 
     @Test

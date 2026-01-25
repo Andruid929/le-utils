@@ -6,8 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -33,7 +34,7 @@ public class TimeUtil {
      * Example: {@code 2025 05, 2026}
      */
 
-    public static final String DATE_FORMAT = "MMMM dd, yyyy";
+    public static final String DATE_FORMAT = "MMMM dd, uuuu";
 
     /**
      * The captured timestamp in epoch milliseconds.
@@ -69,22 +70,13 @@ public class TimeUtil {
     }
 
     /**
-     * Converts the captured timestamp to an {@link Instant} object.
-     *
-     * @return an Instant representing the captured moment in time.
-     */
-    public Instant toInstant() {
-        return Instant.ofEpochMilli(getEpochMillis());
-    }
-
-    /**
      * Formats the captured time according to the specified pattern using UTC timezone.
      *
      * @param timeFormat the pattern to format the time (e.g. "HH:mm:ss", "yyyy-MM-dd").
      * @return the formatted time string in the UTC timezone.
      */
     public String getTime(String timeFormat) {
-        return getTime(timeFormat, ZoneOffset.UTC);
+        return getTime(timeFormat, ZoneId.systemDefault());
     }
 
     /**
@@ -95,7 +87,7 @@ public class TimeUtil {
      * @return the formatted time string in the specified timezone.
      */
     public String getTime(String timeFormat, ZoneId zoneId) {
-        LocalDateTime instant = LocalDateTime.ofInstant(toInstant(), zoneId);
+        ZonedDateTime instant = toInstant().atZone(zoneId);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(timeFormat);
 
@@ -108,7 +100,7 @@ public class TimeUtil {
      * @return the time formatted as HH:mm:ss.
      */
     public String getActualTime() {
-        return getTime(TIME_FORMAT, ZoneOffset.UTC);
+        return getTime(TIME_FORMAT, ZoneId.systemDefault());
     }
 
     /**
@@ -117,7 +109,7 @@ public class TimeUtil {
      * @return the date formatted as "Month day, Year".
      */
     public String getFullDate() {
-        return getTime(DATE_FORMAT, ZoneOffset.UTC);
+        return getTime(DATE_FORMAT, ZoneId.systemDefault());
     }
 
     /**
@@ -144,7 +136,7 @@ public class TimeUtil {
      * @return the year (e.g. "2024").
      */
     public String getYear() {
-        return getTime("yyyy");
+        return getTime("uuuu");
     }
 
     /**
@@ -175,16 +167,58 @@ public class TimeUtil {
     }
 
     /**
+     * Returns the captured timestamp as an ISO-8601 formatted date-time string.
+     * The output includes the date, time, and offset from UTC (e.g. "2023-03-15T10:15:30+01:00").
+     *
+     * @return a string representation of the captured timestamp in ISO-8601 format.
+     */
+    public String get8601DateTime() {
+        return toZonedDateTime(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    }
+
+    /**
      * Converts the captured timestamp to a {@link Calendar} object.
      *
      * @return a Calendar instance set to the captured timestamp.
      */
     public Calendar toCalendar() {
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(ZoneOffset.UTC));
+        TimeZone timeZone = TimeZone.getTimeZone(ZoneId.systemDefault());
+        
+        Calendar calendar = Calendar.getInstance(timeZone);
 
         calendar.setTimeInMillis(getEpochMillis());
 
         return calendar;
+    }
+
+    /**
+     * Converts the captured timestamp to an {@link Instant} object.
+     *
+     * @return an Instant representing the captured moment in time.
+     */
+    public Instant toInstant() {
+        return Instant.ofEpochMilli(getEpochMillis());
+    }
+
+    /**
+     * Converts the captured timestamp to a {@link LocalDateTime} object in the specified timezone.
+     *
+     * @param zoneId the timezone to use for the conversion.
+     * @return a LocalDateTime representing the captured moment in the specified timezone.
+     */
+    public LocalDateTime toLocalDateTime(ZoneId zoneId) {
+        return LocalDateTime.ofInstant(toInstant(), zoneId);
+    }
+
+    /**
+     * Converts the captured timestamp to a {@link ZonedDateTime} object in the specified timezone.
+     *
+     * @param zoneId the timezone to use for the conversion.
+     * @return a ZonedDateTime representing the captured moment in the specified timezone.
+     */
+    public ZonedDateTime toZonedDateTime(ZoneId zoneId) {
+        return toInstant().atZone(zoneId);
     }
 
     /**
@@ -195,8 +229,27 @@ public class TimeUtil {
      */
     @Contract(" -> new")
     public static @NotNull TimeUtil captureInstant() {
-
         return new TimeUtil();
+    }
+
+    /**
+     * Parses a given ISO-8601 formatted time string into a {@link TimeUtil} instance.
+     * The provided string must conform to the {@link DateTimeFormatter#ISO_OFFSET_DATE_TIME} standard.
+     *
+     * @param timeString the ISO-8601 formatted time string to be parsed, e.g. "2023-03-15T10:15:30+01:00".
+     * @return a {@link TimeUtil} instance representing the parsed time.
+     * @throws DateTimeParseException if the string cannot be parsed as a valid ISO-8601 date-time.
+     * @throws NullPointerException if the provided time string is null.
+     */
+    public static @NotNull TimeUtil parseFromString(String timeString) {
+        ZonedDateTime time = ZonedDateTime.parse(timeString, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+
+        return new TimeUtil() {
+            @Override
+            public long getEpochMillis() {
+                return time.toInstant().toEpochMilli();
+            }
+        };
     }
 
     /**

@@ -29,6 +29,18 @@ class TimeUnitConversionTest {
     }
 
     @Test
+    void formatWithUnit() {
+        String formatLongWithUnit = TimeUnitConversion.formatWithUnit(2, TimeUnitConversion.Unit.DAYS, TimeUnitConversion.Unit.MINUTES);
+
+        String formatWithUnit = TimeUnitConversion.formatWithUnit(45.0, TimeUnitConversion.Unit.SECONDS, TimeUnitConversion.Unit.HOURS);
+        String formatWithUnitRounded = TimeUnitConversion.formatWithUnit(45.0, TimeUnitConversion.Unit.SECONDS, TimeUnitConversion.Unit.HOURS, true);
+
+        assertEquals("2880m", formatLongWithUnit);
+        assertEquals("0.0125h", formatWithUnit);
+        assertEquals("0.013h", formatWithUnitRounded);
+    }
+
+    @Test
     void longMilliToSecond() {
         assertEquals(2, TimeUnitConversion.milliToSecond(2000));
     }
@@ -54,7 +66,7 @@ class TimeUnitConversionTest {
             "0.5, HOURS, MINUTES, 30.0",
             "360.0, SECONDS, HOURS, 0.1"
     })
-    void calculate(double value, TimeUnit from, TimeUnit to, double expected) {
+    void calculate(double value, TimeUnitConversion.Unit from, TimeUnitConversion.Unit to, double expected) {
         assertEquals(expected, TimeUnitConversion.calculate(value, from, to));
     }
 
@@ -64,7 +76,7 @@ class TimeUnitConversionTest {
             "4, HOURS, MINUTES, 240",
             "1, HOURS, SECONDS, 3600"
     })
-    void longCalculate(long value, TimeUnit from, TimeUnit to, long expected) {
+    void longCalculate(long value, TimeUnitConversion.Unit from, TimeUnitConversion.Unit to, long expected) {
         assertEquals(expected, TimeUnitConversion.calculate(value, from, to));
     }
 
@@ -97,7 +109,7 @@ class TimeUnitConversionTest {
     void overflows() {
         long hugeAmountOfDays = 202_601_070_000L;
 
-        long value = TimeUnitConversion.calculate(hugeAmountOfDays, TimeUnit.DAYS, TimeUnit.MILLISECONDS);
+        long value = TimeUnitConversion.calculate(hugeAmountOfDays, TimeUnitConversion.Unit.DAYS, TimeUnitConversion.Unit.MILLISECONDS);
 
         assertTrue(value < 0);
     }

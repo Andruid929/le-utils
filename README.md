@@ -29,6 +29,9 @@ Time unit conversion.
 
 - Convert between any two time units: milliseconds, seconds, minutes, hours, days
 
+Task time calculation
+
+- Time taken for tasks to complete down to the nanosecond
 
 ## Requirements
 
@@ -45,7 +48,7 @@ In `pom.xml`:
 <dependency>
     <groupId>io.github.andruid929</groupId>
     <artifactId>le-utils</artifactId>
-    <version>2.3.0</version>
+    <version>3.0.0</version>
 </dependency>
 ```
 
@@ -53,5 +56,5 @@ In `pom.xml`:
 
 In `build.gradle`:
 ```groovy
-implementation 'io.github.andruid929:le-utils:2.3.0'
+implementation 'io.github.andruid929:le-utils:3.0.0'
 ```

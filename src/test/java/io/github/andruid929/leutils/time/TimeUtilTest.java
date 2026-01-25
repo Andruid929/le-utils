@@ -3,6 +3,7 @@ package io.github.andruid929.leutils.time;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,16 +29,16 @@ class TimeUtilTest {
 
     @Test
     void getTime() {
-        String expTime = "21 May, 2005 | 12:31:00";
+        String expTime = "21 May, 2005 | 12:31:00 GMT+02:00";
 
-        String format = "dd MMMM, yyyy | HH:mm:ss";
+        String format = "dd MMMM, yyyy | HH:mm:ss z";
 
         assertEquals(expTime, time.getTime(format, ZoneId.of("GMT+2")));
     }
 
     @Test
     void getActualTime() {
-        assertEquals("10:31:00", time.getActualTime());
+        assertEquals("12:31:00", time.getActualTime());
     }
 
     @Test
@@ -62,7 +63,12 @@ class TimeUtilTest {
 
     @Test
     void getHour() {
-        assertEquals("10", time.getHour());
+        assertEquals("12", time.getHour());
+    }
+
+    @Test
+    void get8601DateTime() {
+        assertEquals("2005-05-21T12:31:00+02:00", time.get8601DateTime());
     }
 
     @Test

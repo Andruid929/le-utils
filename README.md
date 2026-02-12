@@ -10,6 +10,7 @@ A lightweight Java utility library providing helpful functions for common repeti
     - Get clean, formatted error messages from exceptions
     - Print errors to custom output streams
     - Handles exceptions with or without messages
+    - Get stack traces from exceptions as Strings
 
 ### String Tokenisation
 
@@ -48,7 +49,7 @@ In `pom.xml`:
 <dependency>
     <groupId>io.github.andruid929</groupId>
     <artifactId>le-utils</artifactId>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
 </dependency>
 ```
 
@@ -56,5 +57,5 @@ In `pom.xml`:
 
 In `build.gradle`:
 ```groovy
-implementation 'io.github.andruid929:le-utils:3.0.0'
+implementation 'io.github.andruid929:le-utils:3.1.0'
 ```

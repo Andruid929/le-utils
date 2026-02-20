@@ -49,7 +49,7 @@ In `pom.xml`:
 <dependency>
     <groupId>io.github.andruid929</groupId>
     <artifactId>le-utils</artifactId>
-    <version>3.1.0</version>
+    <version>3.2.0</version>
 </dependency>
 ```
 
@@ -57,5 +57,5 @@ In `pom.xml`:
 
 In `build.gradle`:
 ```groovy
-implementation 'io.github.andruid929:le-utils:3.1.0'
+implementation 'io.github.andruid929:le-utils:3.2.0'
 ```

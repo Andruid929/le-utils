@@ -15,7 +15,7 @@
 
     <name>Le utils</name>
     <description>Some useful utilities for repetitive tasks</description>
-    <url>https://github.com/Andruid929/</url>
+    <url>https://github.com/Andruid929/le-utils</url>
 
     <developers>
         <developer>
@@ -26,9 +26,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/Andruid929/le-utils.git</connection>
-        <developerConnection>scm:git:ssh://github.com:Andruid929/le-utils.git</developerConnection>
-        <url>https://github.com/Andruid929/tree/main</url>
+        <connection>scm:git:https://github.com/Andruid929/le-utils.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/Andruid929/le-utils.git</developerConnection>
+        <url>https://github.com/Andruid929/le-utils</url>
     </scm>
 
     <licenses>
@@ -52,12 +52,6 @@
             <artifactId>junit-jupiter</artifactId>
             <version>5.11.4</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.13.2</version>
         </dependency>
     </dependencies>
 
@@ -113,31 +107,42 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.2.8</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.sonatype.central</groupId>
-                <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.9.0</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <publishingServerId>central</publishingServerId>
-                    <deploymentName>Le utils</deploymentName>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.8</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.9.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <deploymentName>Le utils</deploymentName>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

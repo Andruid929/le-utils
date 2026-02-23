@@ -34,11 +34,22 @@ Task time calculation
 
 - Time taken for tasks to complete down to the nanosecond
 
+## What’s New (3.2.0)
+
+### Config
+  - Safer getters: parsing getters throw NoSuchElementException when a key is missing.
+  - Robust arrays: whitespace-insensitive bracketed CSV; [] → empty array.
+  - Invalid lines: constructor exposes non key:value lines via getInvalidConfigs().
+  - Deterministic persistence: snapshot and sorted keys for stable files.
+
+### StringUtil
+  - Clear Javadoc and behaviour notes for trimming and splitting variants.
+
 ## Requirements
 
 - Java 21 or higher
 - Dependencies:
-    - JetBrains Annotations 26.0.2 (optional)
+    - JetBrains Annotations 26.0.2
 
 ## Installation
 
@@ -49,7 +60,7 @@ In `pom.xml`:
 <dependency>
     <groupId>io.github.andruid929</groupId>
     <artifactId>le-utils</artifactId>
-    <version>3.1.0</version>
+    <version>3.2.0</version>
 </dependency>
 ```
 
@@ -57,5 +68,5 @@ In `pom.xml`:
 
 In `build.gradle`:
 ```groovy
-implementation 'io.github.andruid929:le-utils:3.1.0'
+implementation 'io.github.andruid929:le-utils:3.2.0'
 ```

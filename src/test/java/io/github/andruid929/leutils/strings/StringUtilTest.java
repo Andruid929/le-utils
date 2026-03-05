@@ -118,4 +118,12 @@ class StringUtilTest {
 
         assertEquals(-1, StringUtil.getLastCharIndex(""));
     }
+
+    @Test
+    void normaliseUrl() {
+        String invalidUrl = " https:\\\\github.com\\Andruid929/le utils ";
+
+        assertEquals("https://github.com/Andruid929/le-utils", StringUtil.normaliseUrl(invalidUrl, StringUtil.SpaceMode.HYPHEN));
+        assertEquals("https://github.com/Andruid929/le%20utils", StringUtil.normaliseUrl(invalidUrl, StringUtil.SpaceMode.SPACE));
+    }
 }

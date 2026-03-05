@@ -208,4 +208,43 @@ public final class StringUtil {
     public static int getLastCharIndex(@NotNull String input) {
         return input.length() - 1;
     }
+
+    /**
+     * Normalises a URL by trimming whitespace, replacing spaces according to the specified mode,
+     * and converting backslashes to forward slashes.
+     *
+     * @param input non-null URL string to normalise
+     * @param mode  space replacement strategy (e.g. %20 or hyphen)
+     * @return normalised URL string
+     */
+    public static @NotNull String normaliseUrl(@NotNull String input, @NotNull SpaceMode mode) {
+        String trimmedUrl = input.trim();
+
+        return trimmedUrl.replaceAll(" ", mode.literalReplacement)
+                .replaceAll(Pattern.quote("\\"), "/");
+    }
+
+    /**
+     * Defines how spaces should be replaced in URL normalisation.
+     */
+    public enum SpaceMode {
+
+        /**
+         * Replace spaces with an encoded space (%20).
+         */
+        SPACE("%20"),
+
+        /**
+         * Replace spaces with hyphens (-).
+         */
+        HYPHEN("-");
+
+        private final String literalReplacement;
+
+        SpaceMode(String literalReplacement) {
+            this.literalReplacement = literalReplacement;
+        }
+
+
+    }
 }

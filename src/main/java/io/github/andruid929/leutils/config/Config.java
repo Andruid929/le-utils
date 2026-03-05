@@ -85,7 +85,7 @@ public final class Config {
     public Config(@NotNull List<String> configsList) {
         Map<String, String> configMap = new HashMap<>();
 
-        java.util.List<String> invalids = new ArrayList<>();
+        List<String> invalids = new ArrayList<>();
 
         for (String config : configsList) {
             String[] keyAndValue = config.trim().split(":", 2);
@@ -136,11 +136,7 @@ public final class Config {
      */
 
     public int getInteger(String key) {
-        String value = getString(key);
-
-        if (value == null) {
-            throw new NoSuchElementException("Missing config for key: " + key);
-        }
+        String value = checkForValue(key);
 
         return Integer.parseInt(value);
     }
@@ -155,11 +151,7 @@ public final class Config {
      */
 
     public long getLong(String key) {
-        String value = getString(key);
-
-        if (value == null) {
-            throw new NoSuchElementException("Missing config for key: " + key);
-        }
+        String value = checkForValue(key);
 
         return Long.parseLong(value);
     }
@@ -174,10 +166,8 @@ public final class Config {
      */
 
     public boolean getBoolean(String key) {
-        String value = getString(key);
-        if (value == null) {
-            throw new NoSuchElementException("Missing config for key: " + key);
-        }
+        String value = checkForValue(key);
+
         return Boolean.parseBoolean(value);
     }
 
@@ -191,10 +181,8 @@ public final class Config {
      */
 
     public float getFloat(String key) {
-        String value = getString(key);
-        if (value == null) {
-            throw new NoSuchElementException("Missing config for key: " + key);
-        }
+        String value = checkForValue(key);
+
         return Float.parseFloat(value);
     }
 
@@ -208,11 +196,7 @@ public final class Config {
      */
 
     public double getDouble(String key) {
-        String value = getString(key);
-
-        if (value == null) {
-            throw new NoSuchElementException("Missing config for key: " + key);
-        }
+        String value = checkForValue(key);
 
         return Double.parseDouble(value);
     }
@@ -227,11 +211,7 @@ public final class Config {
      */
 
     public char getCharacter(String key) {
-        String s = getString(key);
-
-        if (s == null) {
-            throw new NoSuchElementException("Missing config for key: " + key);
-        }
+        String s = checkForValue(key);
 
         if (s.isEmpty()) {
             throw new IllegalArgumentException("Empty value for key: " + key);
@@ -241,9 +221,10 @@ public final class Config {
     }
 
     /**
-     * Parses the value for {@code key} as a string array. Expected formats include a bracketed,
-     * comma-separated list such as {@code [a, b, c]} or {@code [a,b,c]}. All whitespace is removed
-     * before parsing. A blank or {@code []} value yields an empty array.
+     * Parses the value for {@code key} as a string array. Expected formats include a
+     * comma-separated sequence such as {@code [a, b, c]} or {@code [a,b,c]}
+     * and a regular comma-separated sequence like {@code a, b, c}.
+     * All whitespace is removed before parsing. A blank or {@code []} value yields an empty array.
      *
      * @param key configuration key
      * @return array of string elements; never {@code null}
@@ -251,11 +232,7 @@ public final class Config {
      */
 
     public String @NotNull [] getArray(String key) {
-        String raw = getString(key);
-
-        if (raw == null) {
-            throw new NoSuchElementException("Missing config for key: " + key);
-        }
+        String raw = checkForValue(key);
 
         String value = raw.replaceAll("\\s+", "");
 
@@ -269,7 +246,11 @@ public final class Config {
             return new String[]{};
         }
 
-        return csvString.split(",");
+        List<String> values = Arrays.stream(csvString.split(","))
+                .map(String::trim)
+                .toList();
+
+        return values.toArray(String[]::new);
     }
 
     /**
@@ -300,6 +281,16 @@ public final class Config {
         }
 
         return ints;
+    }
+
+    private @NotNull String checkForValue(String key) {
+        String value = getString(key);
+
+        if (value == null) {
+            throw new NoSuchElementException("Missing config for key \"".concat(key).concat("\""));
+        }
+
+        return value;
     }
 
     /**

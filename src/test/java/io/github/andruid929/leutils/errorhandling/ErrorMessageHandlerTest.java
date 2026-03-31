@@ -2,9 +2,6 @@ package io.github.andruid929.leutils.errorhandling;
 
 import org.junit.jupiter.api.Test;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class ErrorMessageHandlerTest {
@@ -54,6 +51,15 @@ class ErrorMessageHandlerTest {
         String errorMessage = ErrorMessageHandler.simpleErrorMessage(new NullPointerException("Value is null"));
 
         assertTrue(errorMessage.endsWith("null"));
+    }
+
+    @Test
+    void move() {
+        double number = 1.07374182 * Math.pow(10, 9);
+
+        long num = (long) number;
+
+        System.out.println(num);
     }
 
 }

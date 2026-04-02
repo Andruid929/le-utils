@@ -197,6 +197,28 @@ public class TimeUnitConversion {
     }
 
     /**
+     * Converts a {@code long} value from one time unit to another and returns the result as a {@code double}.
+     *
+     * @param value the numeric value to convert
+     * @param from  the source unit
+     * @param to    the target unit
+     * @return the converted value in the target unit as a {@code double}
+     * @throws IllegalArgumentException if {@code value} is negative
+     * @since 3.4.0
+     */
+    public static double calculateAsDouble(long value, Unit from, Unit to) {
+        if (value < 0) {
+            throw new IllegalArgumentException("Negative time is not possible");
+        } else if (value == 0) {
+            return 0;
+        }
+
+        double valueInMs = value * from.getInMillis();
+
+        return valueInMs / to.getInMillis();
+    }
+
+    /**
      * Converts a time value from one unit to another and appends the target unit's suffix
      * to the resulting value.
      * <p>It is important to note that this method calls {@link #calculate(long, Unit, Unit) calculate()} which means any problems with that

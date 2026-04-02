@@ -2,9 +2,6 @@ package io.github.andruid929.leutils.errorhandling;
 
 import org.junit.jupiter.api.Test;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class ErrorMessageHandlerTest {

@@ -113,4 +113,10 @@ class TimeUnitConversionTest {
 
         assertTrue(value < 0);
     }
+
+    @Test
+    void calculateAsDouble() {
+        assertEquals(0.5, TimeUnitConversion.calculateAsDouble(30, TimeUnitConversion.Unit.SECONDS, TimeUnitConversion.Unit.MINUTES));
+        assertEquals(1.5, TimeUnitConversion.calculateAsDouble(90, TimeUnitConversion.Unit.SECONDS, TimeUnitConversion.Unit.MINUTES));
+    }
 }

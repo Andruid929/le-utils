@@ -53,13 +53,4 @@ class ErrorMessageHandlerTest {
         assertTrue(errorMessage.endsWith("null"));
     }
 
-    @Test
-    void move() {
-        double number = 1.07374182 * Math.pow(10, 9);
-
-        long num = (long) number;
-
-        System.out.println(num);
-    }
-
 }

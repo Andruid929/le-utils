@@ -4,7 +4,7 @@ A lightweight Java utility library providing helpful functions for common repeti
 
 ## Features
 
-### Error Handling
+### Error handling
 
 - **ErrorMessageHandler**: Simple utility for formatting and printing exception messages
     - Get clean, formatted error messages from exceptions
@@ -12,14 +12,14 @@ A lightweight Java utility library providing helpful functions for common repeti
     - Handles exceptions with or without messages
     - Get stack traces from exceptions as Strings
 
-### String Tokenisation
+### String tokenisation
 
-- **String Tokeniser**: Parse and tokenise strings with quote handling
+- **Tokeniser**: Parse and tokenise strings with quote handling
     - Respects quoted strings (double quotes)
     - Respects escaped double quotes
     - Custom exception handling for unclosed quotes
 
-### Date and Time Utilities
+### Date and time utilities
 
 Epoll-based date and time utilities.
 
@@ -34,6 +34,21 @@ Task time calculation
 
 - Time taken for tasks to complete down to the nanosecond
 
+### Data unit conversion
+
+- **DataUnit**: Enum representing units from Byte to Petabyte (binary prefix, 1024)
+- **DataUnitConversion**: 
+    - Convert between any two data units: B, KB, MB, GB, TB, PB
+    - Supports `long` and `double` precision
+    - Formatted string output with unit suffixes (e.g. "1.5MB")
+    - Intentional `long` overflow wrap-around for performance and resilience
+
+### Formatting
+
+- **NumberFormatting**: 
+    - Format numbers with custom or default (2) decimal places
+    - Automatic inclusion of standard group separators (e.g. 1,234.56)
+
 ### Config
 
 Create and read configs with a simple and readable key:value pair format.
@@ -46,18 +61,22 @@ Create and read configs with a simple and readable key:value pair format.
 - **Trim leading and/or trailing characters**
 - **Normalise URL strings**
 
-## What’s New (3.3.0)
+## What’s new (3.4.0)
 
-### Config
-  - Better handling of array parsing
+### Data unit conversion
+- New `DataUnit` and `DataUnitConversion` classes for byte-based unit conversions.
+- Support for `long` and `double` conversions across B, KB, MB, GB, TB, and PB.
+- `formatWithUnit` methods for easy display of data sizes.
 
-### StringUtil
-  - Normalise string URLs: Replace slashes with backslashes and spaces with either
-    encoded spaces or hyphens.
+### Formatting
+- New `NumberFormatting` utility for consistent number display with group separators and decimal control.
+
+### Time unit conversion
+- Added `calculateAsDouble(long, Unit, Unit)` for decimal precision during time conversions.
 
 ## Requirements
 
-- Java 21 or higher
+- Java 21+
 - Dependencies:
     - JetBrains Annotations 26.0.2
 

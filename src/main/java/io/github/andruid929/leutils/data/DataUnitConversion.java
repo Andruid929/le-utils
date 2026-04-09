@@ -34,10 +34,9 @@ public final class DataUnitConversion {
      * @return the converted value in the target unit
      * @throws IllegalArgumentException if {@code value} is negative
      */
+    @Contract(pure = true)
     public static long calculate(long value, DataUnit from, DataUnit to) {
-        if (value == 0) {
-            return 0;
-        } else if (value < 0) {
+        if (value < 0) {
             throw new IllegalArgumentException("Negative data is not possible");
         }
 
@@ -53,10 +52,10 @@ public final class DataUnitConversion {
      * @return the converted value in the target unit
      * @throws IllegalArgumentException if {@code value} is negative
      */
+
+    @Contract(pure = true)
     public static double calculate(double value, DataUnit from, DataUnit to) {
-        if (value == 0) {
-            return 0;
-        } else if (value < 0) {
+        if (value < 0) {
             throw new IllegalArgumentException("Negative data is not possible");
         }
 
@@ -72,10 +71,10 @@ public final class DataUnitConversion {
      * @return the converted value in the target unit as a {@code double}
      * @throws IllegalArgumentException if {@code value} is negative
      */
+
+    @Contract(pure = true)
     public static double calculateAsDouble(long value, DataUnit from, DataUnit to) {
-        if (value == 0) {
-            return 0;
-        } else if (value < 0) {
+        if (value < 0) {
             throw new IllegalArgumentException("Negative data is not possible");
         }
 
@@ -96,7 +95,7 @@ public final class DataUnitConversion {
     public static @NotNull String formatWithUnit(long value, DataUnit from, DataUnit to) {
         long calculation = calculate(value, from, to);
 
-        return NumberFormatting.formatNumber(calculation).concat(to.getUnitSuffix());
+        return NumberFormatting.formatWholeNumber(calculation).concat(to.getUnitSuffix());
     }
 
     /**
@@ -106,7 +105,7 @@ public final class DataUnitConversion {
      * @param from     the source unit
      * @param to       the target unit
      * @param roundOff optional boolean; if {@code true}, rounds the result to 2 decimal places using
-     *                 {@link io.github.andruid929.leutils.formatting.NumberFormatting#formatNumber(Number)}
+     *                 {@link io.github.andruid929.leutils.formatting.NumberFormatting#formatNumber(double)}
      * @return a formatted string
      * @throws IllegalArgumentException if {@code value} is negative
      */

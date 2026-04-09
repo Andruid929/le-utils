@@ -1,21 +1,19 @@
 package io.github.andruid929.leutils.time;
 
 import org.jetbrains.annotations.NotNull;
-
 /**
  * Utility class for converting between different time units.
  * <p>
  * This class provides convenience methods for common time conversions
  * (milliseconds to seconds, seconds to minutes, etc.) as well as a general
- * conversion method that works with any {@link Unit}.
+ * conversion method that works with any {@link TimeUnit}.
  * </p>
  *
  * @author Andrew Jones
  * @since 2.2.0
  */
 public class TimeUnitConversion {
-
-
+    
     /**
      * Private constructor to prevent instantiation of this utility class.
      */
@@ -30,7 +28,7 @@ public class TimeUnitConversion {
      * @throws IllegalArgumentException if {@code millis} is negative.
      */
     public static double milliToSecond(double millis) {
-        return calculate(millis, Unit.MILLISECONDS, Unit.SECONDS);
+        return calculate(millis, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
     }
 
     /**
@@ -41,7 +39,7 @@ public class TimeUnitConversion {
      * @throws IllegalArgumentException if {@code seconds} is negative.
      */
     public static double secondToMinute(double seconds) {
-        return calculate(seconds, Unit.SECONDS, Unit.MINUTES);
+        return calculate(seconds, TimeUnit.SECONDS, TimeUnit.MINUTES);
     }
 
     /**
@@ -52,7 +50,7 @@ public class TimeUnitConversion {
      * @throws IllegalArgumentException if {@code minutes} is negative.
      */
     public static double minuteToHour(double minutes) {
-        return calculate(minutes, Unit.MINUTES, Unit.HOURS);
+        return calculate(minutes, TimeUnit.MINUTES, TimeUnit.HOURS);
     }
 
     /**
@@ -63,7 +61,7 @@ public class TimeUnitConversion {
      * @throws IllegalArgumentException if {@code hours} is negative.
      */
     public static double hourToDay(double hours) {
-        return calculate(hours, Unit.HOURS, Unit.DAYS);
+        return calculate(hours, TimeUnit.HOURS, TimeUnit.DAYS);
     }
 
     /**
@@ -81,7 +79,7 @@ public class TimeUnitConversion {
      * {@code millis} by the conversion factor exceeds {@link Long#MAX_VALUE}.
      */
     public static long milliToSecond(long millis) {
-        return calculate(millis, Unit.MILLISECONDS, Unit.SECONDS);
+        return calculate(millis, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
     }
 
     /**
@@ -99,7 +97,7 @@ public class TimeUnitConversion {
      * {@code seconds} by the conversion factor exceeds {@link Long#MAX_VALUE}.
      */
     public static long secondToMinute(long seconds) {
-        return calculate(seconds, Unit.SECONDS, Unit.MINUTES);
+        return calculate(seconds, TimeUnit.SECONDS, TimeUnit.MINUTES);
     }
 
     /**
@@ -117,7 +115,7 @@ public class TimeUnitConversion {
      * {@code minutes} by the conversion factor exceeds {@link Long#MAX_VALUE}.
      */
     public static long minuteToHour(long minutes) {
-        return calculate(minutes, Unit.MINUTES, Unit.HOURS);
+        return calculate(minutes, TimeUnit.MINUTES, TimeUnit.HOURS);
     }
 
     /**
@@ -135,7 +133,7 @@ public class TimeUnitConversion {
      * {@code hours} by the conversion factor exceeds {@link Long#MAX_VALUE}.
      */
     public static long hourToDay(long hours) {
-        return calculate(hours, Unit.HOURS, Unit.DAYS);
+        return calculate(hours, TimeUnit.HOURS, TimeUnit.DAYS);
     }
 
     /**
@@ -151,7 +149,7 @@ public class TimeUnitConversion {
      * @return the converted time value in the target unit.
      * @throws IllegalArgumentException if {@code value} is negative.
      */
-    public static double calculate(double value, Unit from, Unit to) {
+    public static double calculate(double value, TimeUnit from, TimeUnit to) {
         if (value < 0) {
             throw new IllegalArgumentException("Negative time is not possible");
         } else if (value == 0) {
@@ -178,13 +176,13 @@ public class TimeUnitConversion {
      * @apiNote This method performs integer division which results in
      * precision loss. Any fractional values in the target unit are truncated.
      * For example, converting 1500 milliseconds to seconds will result in 1 second,
-     * losing the remaining 500 milliseconds. Consider using {@link #calculate(double, Unit, Unit)}
+     * losing the remaining 500 milliseconds. Consider using {@link #calculate(double, TimeUnit, TimeUnit)}
      * for more precise conversions.
      * <p>
      * <b>Warning:</b> This method may overflow for large values if multiplication of
      * {@code value} by the conversion factor exceeds {@link Long#MAX_VALUE}.
      */
-    public static long calculate(long value, Unit from, Unit to) {
+    public static long calculate(long value, TimeUnit from, TimeUnit to) {
         if (value < 0) {
             throw new IllegalArgumentException("Negative time is not possible");
         } else if (value == 0) {
@@ -206,7 +204,7 @@ public class TimeUnitConversion {
      * @throws IllegalArgumentException if {@code value} is negative
      * @since 3.4.0
      */
-    public static double calculateAsDouble(long value, Unit from, Unit to) {
+    public static double calculateAsDouble(long value, TimeUnit from, TimeUnit to) {
         if (value < 0) {
             throw new IllegalArgumentException("Negative time is not possible");
         } else if (value == 0) {
@@ -221,7 +219,7 @@ public class TimeUnitConversion {
     /**
      * Converts a time value from one unit to another and appends the target unit's suffix
      * to the resulting value.
-     * <p>It is important to note that this method calls {@link #calculate(long, Unit, Unit) calculate()} which means any problems with that
+     * <p>It is important to note that this method calls {@link #calculate(long, TimeUnit, TimeUnit) calculate()} which means any problems with that
      * method will also be present here.</p>
      *
      * @param value the time value to convert.
@@ -230,7 +228,7 @@ public class TimeUnitConversion {
      * @return a String representation of the converted time value concatenated with the target unit's suffix.
      * @throws IllegalArgumentException if {@code value} is negative.
      */
-    public static @NotNull String formatWithUnit(long value, Unit from, Unit to) {
+    public static @NotNull String formatWithUnit(long value, TimeUnit from, TimeUnit to) {
         long calculation = calculate(value, from, to);
 
         return String.valueOf(calculation).concat(to.getUnitSuffix());
@@ -250,7 +248,7 @@ public class TimeUnitConversion {
      * @return a String representation of the converted value, optionally rounded, concatenated with the target unit's suffix.
      * @throws IllegalArgumentException if {@code value} is negative.
      */
-    public static @NotNull String formatWithUnit(double value, Unit from, Unit to, boolean @NotNull ... roundOff) {
+    public static @NotNull String formatWithUnit(double value, TimeUnit from, TimeUnit to, boolean @NotNull ... roundOff) {
         double calculation = calculate(value, from, to);
 
         boolean shouldRound = roundOff.length > 0 && roundOff[0];
@@ -262,81 +260,4 @@ public class TimeUnitConversion {
         return String.valueOf(calculation).concat(to.getUnitSuffix());
     }
 
-    /**
-     * Enum representing common time units with their string suffixes and millisecond conversion values.
-     * <p>
-     * This enum provides a convenient way to work with different time units and convert between them
-     * using milliseconds as the base unit.
-     * </p>
-     *
-     * @author Andrew Jones
-     * @since 2.2.0
-     */
-
-    public enum Unit {
-
-        /**
-         * Milliseconds time unit with suffix "ms" and value of 1 millisecond.
-         */
-        MILLISECONDS("ms", 1),
-
-        /**
-         * Seconds time unit with suffix "s" and value of 1,000 milliseconds.
-         */
-        SECONDS("s", 1_000),
-
-        /**
-         * Minutes time unit with suffix "m" and value of 60,000 milliseconds.
-         */
-        MINUTES("m", 60_000),
-
-        /**
-         * Hours time unit with suffix "h" and value of 3.6 million milliseconds.
-         */
-        HOURS("h", 3_600_000),
-
-        /**
-         * Days time unit with suffix "d" and value of 86.4 million milliseconds.
-         */
-        DAYS("d", 86_400_000);
-
-        /**
-         * The string suffix representing this time unit (e.g. "ms", "s", "m").
-         */
-        private final String unitSuffix;
-
-        /**
-         * The value of this time unit expressed in milliseconds.
-         */
-        private final long inMillis;
-
-        /**
-         * Constructs a Unit with the specified suffix and millisecond value.
-         *
-         * @param unitSuffix the string suffix for this time unit
-         * @param inMillis   the value of this time unit in milliseconds
-         */
-        Unit(String unitSuffix, long inMillis) {
-            this.unitSuffix = unitSuffix;
-            this.inMillis = inMillis;
-        }
-
-        /**
-         * Returns the value of this time unit in milliseconds.
-         *
-         * @return the millisecond value of this time unit
-         */
-        public long getInMillis() {
-            return inMillis;
-        }
-
-        /**
-         * Returns the string suffix representing this time unit.
-         *
-         * @return the unit suffix (e.g. "ms", "s", "m", "h", "d")
-         */
-        public String getUnitSuffix() {
-            return unitSuffix;
-        }
-    }
 }

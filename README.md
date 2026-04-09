@@ -1,4 +1,4 @@
-# Le Utils
+# Le Utils v4.0.0
 
 A lightweight Java utility library providing helpful functions for common repetitive tasks.
 
@@ -11,6 +11,7 @@ A lightweight Java utility library providing helpful functions for common repeti
     - Print errors to custom output streams
     - Handles exceptions with or without messages
     - Get stack traces from exceptions as Strings
+    - 
 
 ### String tokenisation
 
@@ -61,22 +62,30 @@ Create and read configs with a simple and readable key:value pair format.
 - **Trim leading and/or trailing characters**
 - **Normalise URL strings**
 
-## What’s new (3.4.0)
+### Swing utilities
 
-### Data unit conversion
-- New `DataUnit` and `DataUnitConversion` classes for byte-based unit conversions.
-- Support for `long` and `double` conversions across B, KB, MB, GB, TB, and PB.
-- `formatWithUnit` methods for easy display of data sizes.
+- **Add keybinds** – Customisable key input combinations to perform tasks
+- **Dialogs** – Display simple warning, error or info dialogs
 
-### Formatting
-- New `NumberFormatting` utility for consistent number display with group separators and decimal control.
+## What’s new
 
-### Time unit conversion
-- Added `calculateAsDouble(long, Unit, Unit)` for decimal precision during time conversions.
+### Breaking changes
+- TimeUnitConversion.Unit enum is now a standalone enum TimeUnit inside the time package
+
+### Dialogs
+- Choose to display a warning, error or information
+- Set custom titles and messages
+
+### Keybinds
+- Add keybinds to swing frames
+- Single key presses or multiple combinations with shift, alt etc
+
+### Error root tracing
+- Find the root cause of nested exceptions with their messages
 
 ## Requirements
 
-- Java 21+
+- Java 11+
 - Dependencies:
     - JetBrains Annotations 26.0.2
 
@@ -89,7 +98,7 @@ In `pom.xml`:
 <dependency>
     <groupId>io.github.andruid929</groupId>
     <artifactId>le-utils</artifactId>
-    <version>3.4.0</version>
+    <version>${latest.version}</version>
 </dependency>
 ```
 
@@ -97,5 +106,5 @@ In `pom.xml`:
 
 In `build.gradle`:
 ```groovy
-implementation 'io.github.andruid929:le-utils:3.4.0'
+implementation 'io.github.andruid929:le-utils:${latest.version}'
 ```

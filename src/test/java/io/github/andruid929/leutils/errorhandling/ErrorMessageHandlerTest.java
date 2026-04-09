@@ -1,5 +1,7 @@
 package io.github.andruid929.leutils.errorhandling;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,5 +54,59 @@ class ErrorMessageHandlerTest {
 
         assertTrue(errorMessage.endsWith("null"));
     }
+
+    @Test
+    void throwableRootTracer() {
+        Error e = throwsError();
+
+        String rootMessage = ErrorMessageHandler.throwableRootMessageTracer(e);
+        Throwable throwableRoot = ErrorMessageHandler.throwableRootTracer(e);
+
+        String message = e.getMessage();
+
+        assertEquals(NumberFormatException.class, throwableRoot.getClass());
+        assertEquals(Error.class, e.getClass());
+
+        assertTrue(rootMessage.startsWith("For input"));
+        assertTrue(message.contains("IllegalStateException"));
+    }
+
+    @Test
+    void rootTracerWithNoCause() {
+        Exception simple = new Exception("Simple error");
+        assertEquals(simple, ErrorMessageHandler.throwableRootTracer(simple));
+    }
+
+    @Test
+    void rootMessageTracerWithNullMessage() {
+        Exception rootWithoutMessage = new Exception();
+        Exception wrapped = new Exception(rootWithoutMessage);
+
+        assertEquals("", ErrorMessageHandler.throwableRootMessageTracer(wrapped));
+    }
+
+    @Test
+    void rootTracerMultipleLevels() {
+        NumberFormatException nfe = new NumberFormatException("NFE");
+        IllegalStateException ise = new IllegalStateException(nfe);
+        RuntimeException rte = new RuntimeException(ise);
+
+        assertEquals(nfe, ErrorMessageHandler.throwableRootTracer(rte));
+        assertEquals("NFE", ErrorMessageHandler.throwableRootMessageTracer(rte));
+    }
+
+    @Contract(" -> new")
+    private @NotNull Error throwsError() throws Error {
+        var nfe = new NumberFormatException("For input String \"number\"");
+
+        var ise = new IllegalStateException(nfe);
+
+        var iae = new IllegalArgumentException(ise);
+
+        var re = new UnsupportedOperationException(iae);
+
+        return new Error(re);
+    }
+
 
 }

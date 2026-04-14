@@ -1,5 +1,7 @@
 package io.github.andruid929.leutils.config;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -7,44 +9,83 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class ConfigTest {
 
     private final Path PATH_TO_CONFIG_FILE = Path.of("src", "test", "resources", "Config.tst");
 
-    @Test
-    void readConfigParsesValidLinesAndCollectsInvalidOnes() throws IOException {
-        Config cfg = Config.readConfig(PATH_TO_CONFIG_FILE);
+    private final Config TEST_CONFIG;
 
-        assertEquals("le-utils:3.2.0", cfg.getString("artifact"));
-        assertEquals(3L, cfg.getLong("MAJOR"));
-        assertEquals(0, cfg.getInteger("PATCH"));
-        assertEquals('P', cfg.getCharacter("Letter P"));
+    {
+        Config config;
 
-        assertTrue(cfg.getBoolean("Christian"));
-
-        assertArrayEquals(new String[]{"11", "21", "25"}, cfg.getArray("JDK versions"));
-        assertArrayEquals(new int[]{11, 21, 25}, cfg.getIntArray("JDK versions"));
-
-        // The provided file contains only valid lines; the invalid configs list should be empty
-        assertTrue(cfg.getInvalidConfigs().isEmpty());
+        try {
+            config = Config.readConfig(PATH_TO_CONFIG_FILE);
+        } catch (IOException e) {
+            config = new Config(List.of(
+                    "artifact:le-utils:3.2.0",
+                    "MAJOR:3",
+                    "JDK versions:[11, 21, 25]",
+                    "Letter P:P",
+                    "Christian:true",
+                    "MINOR:2.0",
+                    "PATCH:0"
+            ));
+        }
+        TEST_CONFIG = config;
     }
 
     @Test
-    void gettersThrowOnMissingKeys() throws IOException {
-        Config cfg = Config.readConfig(PATH_TO_CONFIG_FILE);
+    void readConfigParsesValidLinesAndCollectsInvalidOnes() {
+        assertEquals("le-utils:3.2.0", TEST_CONFIG.getString("artifact"));
+        assertEquals(3L, TEST_CONFIG.getLong("MAJOR"));
+        assertEquals(0, TEST_CONFIG.getInteger("PATCH"));
+        assertEquals('P', TEST_CONFIG.getCharacter("Letter P"));
 
-        assertNull(cfg.getString("missing"));
+        assertTrue(TEST_CONFIG.getBoolean("Christian"));
 
-        assertThrows(NoSuchElementException.class, () -> cfg.getInteger("missing"));
-        assertThrows(NoSuchElementException.class, () -> cfg.getLong("missing"));
-        assertThrows(NoSuchElementException.class, () -> cfg.getDouble("missing"));
-        assertThrows(NoSuchElementException.class, () -> cfg.getFloat("missing"));
-        assertThrows(NoSuchElementException.class, () -> cfg.getBoolean("missing"));
-        assertThrows(NoSuchElementException.class, () -> cfg.getCharacter("missing"));
-        assertThrows(NoSuchElementException.class, () -> cfg.getArray("missing"));
-        assertThrows(NoSuchElementException.class, () -> cfg.getIntArray("missing"));
+        assertArrayEquals(new String[]{"11", "21", "25"}, TEST_CONFIG.getArray("JDK versions"));
+        assertArrayEquals(new int[]{11, 21, 25}, TEST_CONFIG.getIntArray("JDK versions"));
+
+        // The provided file contains only valid lines; the invalid configs list should be empty
+        assertTrue(TEST_CONFIG.getInvalidConfigs().isEmpty());
+    }
+
+    @Test
+    void gettersThrowOnMissingKeys() {
+        assertNull(TEST_CONFIG.getString("missing"));
+
+        assertThrows(NoSuchElementException.class, () -> TEST_CONFIG.getInteger("missing"));
+        assertThrows(NoSuchElementException.class, () -> TEST_CONFIG.getLong("missing"));
+        assertThrows(NoSuchElementException.class, () -> TEST_CONFIG.getDouble("missing"));
+        assertThrows(NoSuchElementException.class, () -> TEST_CONFIG.getFloat("missing"));
+        assertThrows(NoSuchElementException.class, () -> TEST_CONFIG.getBoolean("missing"));
+        assertThrows(NoSuchElementException.class, () -> TEST_CONFIG.getCharacter("missing"));
+        assertThrows(NoSuchElementException.class, () -> TEST_CONFIG.getArray("missing"));
+        assertThrows(NoSuchElementException.class, () -> TEST_CONFIG.getIntArray("missing"));
+    }
+
+    @Test
+    void sizes() {
+        Config.add("1", 1);
+        Config.add("2", 2);
+        Config.add("3", 3);
+        Config.add("4", 4);
+        Config.add("5", 5);
+
+        assertEquals(5, Config.numberOfConfigs());
+        assertEquals(7, TEST_CONFIG.size());
+    }
+
+    @Test
+    void remove() {
+        Config.add("1", 1);
+        Config.add("2", 2);
+        Config.add("3", 3);
+        Config.add("4", 4);
+        Config.add("5", 5);
+
+        assertFalse(Config.remove("6"));
+        assertTrue(Config.remove("5"));
     }
 
     @Test

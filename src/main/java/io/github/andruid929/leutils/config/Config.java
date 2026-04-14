@@ -1,6 +1,8 @@
 package io.github.andruid929.leutils.config;
 
-import io.github.andruid929.leutils.strings.StringUtil;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,8 +17,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import io.github.andruid929.leutils.strings.StringUtil;
 
 /**
  * A utility class for managing configurations as key-value pairs. Configurations are represented
@@ -248,7 +249,7 @@ public final class Config {
 
         List<String> values = Arrays.stream(csvString.split(","))
                 .map(String::trim)
-                .toList();
+                .collect(Collectors.toList());
 
         return values.toArray(String[]::new);
     }
@@ -281,6 +282,15 @@ public final class Config {
         }
 
         return ints;
+    }
+
+    /**
+     * Returns the number of configuration entries in this immutable instance.
+     *
+     * @return the count of key-value pairs
+     */
+    public int size() {
+        return keyValueConfigs.size();
     }
 
     private @NotNull String checkForValue(String key) {
@@ -357,6 +367,15 @@ public final class Config {
     }
 
     /**
+     * Returns the number of entries in the global configuration map.
+     *
+     * @return the count of global configuration entries
+     */
+    public static int numberOfConfigs() {
+        return configs.size();
+    }
+
+    /**
      * Removes a global configuration entry if present.
      *
      * @param key configuration key
@@ -364,7 +383,16 @@ public final class Config {
      */
 
     public static boolean remove(String key) {
-        return configs.remove(key) != null;
+
+        if (configs.isEmpty()) {
+            return false;
+        }
+
+        int sizeBefore = numberOfConfigs();
+
+        configs.remove(key);
+
+        return numberOfConfigs() == sizeBefore - 1;
     }
 
     /**

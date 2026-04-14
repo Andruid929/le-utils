@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -98,5 +99,46 @@ public final class ErrorMessageHandler {
 
     public static void printSimpleErrorMessage(@NotNull Throwable e, @NotNull PrintStream printStream) {
         printStream.println(simpleErrorMessage(e));
+    }
+
+    /**
+     * Traces a throwable to its root cause by recursively following the cause chain.
+     * <p>
+     * If the provided throwable has no cause, the throwable itself is returned.
+     * Otherwise, this method traverses the cause chain until it finds the deepest
+     * throwable that has no further cause.
+     *
+     * @param e the throwable to trace to its root cause.
+     * @return the root cause throwable, or the original throwable if it has no cause.
+     */
+    public static Throwable throwableRootTracer(@NotNull Throwable e) {
+        Throwable root = e.getCause();
+
+        if (root == null) {
+            return e;
+        }
+
+        Throwable variable;
+
+        while ((variable = root.getCause()) != null) {
+            root = variable;
+        }
+
+        return root;
+    }
+
+    /**
+     * Retrieves the error message of the root cause of the specified throwable.
+     * <p>
+     * This method is a convenience wrapper around {@link #throwableRootTracer(Throwable)}
+     * that returns the message of the root cause throwable.
+     *
+     * @param e the throwable whose root cause message is to be retrieved.
+     * @return the error message of the root cause, or an empty if the root cause has no message.
+     */
+    public static @NotNull String throwableRootMessageTracer(@NotNull Throwable e) {
+        String errorMessage = throwableRootTracer(e).getMessage();
+
+        return Objects.requireNonNullElse(errorMessage, "");
     }
 }

@@ -7,8 +7,10 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Collects space-separated arguments in a String.
@@ -26,8 +28,14 @@ public final class Token {
 
     private final List<String> arguments;
 
+    /**
+     * List of flags (single dash arguments) in the given String.
+     */
     private final List<String> flags;
 
+    /**
+     * List of options (double dash arguments) in the given String.
+     */
     private final List<String> options;
 
     /**
@@ -36,6 +44,10 @@ public final class Token {
 
     private final StringBuilder argumentBuilder;
 
+    /**
+     * Regex pattern to match flags: a single dash followed by a letter (A-Z or a-z).
+     * Uses negative lookbehind to ensure it's not preceded by another dash.
+     */
     private static final Pattern FLAGS_PATTERN = Pattern.compile("^(?<!-)-[A-Za-z]"); //Single dash followed by a letter
 
     /**
@@ -119,11 +131,11 @@ public final class Token {
 
         this.flags = arguments.stream()
                 .filter(argument -> FLAGS_PATTERN.matcher(argument).find())
-                .toList();
+                .collect(Collectors.toList());
 
         this.options = arguments.stream()
                 .filter(argument -> argument.startsWith("--"))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     /**
@@ -291,7 +303,11 @@ public final class Token {
      */
 
     public String getFirstArgument() {
-        return arguments.getFirst();
+        if (arguments.isEmpty()) {
+            throw new NoSuchElementException("List is empty");
+        }
+
+        return arguments.get(0);
     }
 
     /**
@@ -302,7 +318,11 @@ public final class Token {
      */
 
     public String getLastArgument() {
-        return arguments.getLast();
+        if (arguments.isEmpty()) {
+            throw new NoSuchElementException("List is empty");
+        }
+
+        return arguments.get(arguments.size() - 1);
     }
 
     /**
@@ -338,7 +358,7 @@ public final class Token {
 
     @Contract(pure = true)
     private boolean builderHasData() {
-        return !argumentBuilder.isEmpty();
+        return !(argumentBuilder.length() == 0);
     }
 
     @Override

@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
  * <pre>{@code
  * TaskTimer timer = new TaskTimer();
  * // ... perform some task ...
- * double elapsedSeconds = timer.elapsedTime(TimeUnitConversion.Unit.SECONDS);
- * String formatted = timer.formatElapsedTime(TimeUnitConversion.Unit.MILLISECONDS);
+ * double elapsedSeconds = timer.elapsedTime(TimeUnit.SECONDS);
+ * String formatted = timer.formatElapsedTime(TimeUnit.MILLISECONDS);
  * }</pre>
  *
  * @author Andrew Jones
@@ -58,10 +58,10 @@ public final class TaskTimer {
      * @param convertTo the target time unit for the elapsed time.
      * @return the elapsed time in the specified unit.
      */
-    public double elapsedTime(@NotNull TimeUnitConversion.Unit convertTo) {
+    public double elapsedTime(@NotNull TimeUnit convertTo) {
         double durationInMs = (double) elapsedNanoTime() / 1_000_000.0;
 
-        return TimeUnitConversion.calculate(durationInMs, TimeUnitConversion.Unit.MILLISECONDS, convertTo);
+        return TimeUnitConversion.calculate(durationInMs, TimeUnit.MILLISECONDS, convertTo);
     }
 
     /**
@@ -72,7 +72,7 @@ public final class TaskTimer {
      * @param convertTo the time unit to use for formatting.
      * @return a formatted string in the format <strong>value[unit]</strong> (e.g. "123.456ms").
      */
-    public @NotNull String formatElapsedTime(@NotNull TimeUnitConversion.Unit convertTo) {
+    public @NotNull String formatElapsedTime(@NotNull TimeUnit convertTo) {
         double elapsedTime = elapsedTime(convertTo);
 
         return String.format("%.3f%s", elapsedTime, convertTo.getUnitSuffix());

@@ -3,10 +3,10 @@ package io.github.andruid929.leutils.time;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Calendar;
@@ -175,6 +175,42 @@ public class TimeUtil {
     public String get8601DateTime() {
         return toZonedDateTime(ZoneId.systemDefault())
                 .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    }
+
+    /**
+     * Converts the captured timestamp to a {@link java.sql.Time} object.
+     * The time is formatted in HH:mm:ss format.
+     *
+     * @return a java.sql.Time representing the captured time.
+     */
+    public Time toSQLTime() {
+        String time = getTime("HH:mm:ss");
+
+        return Time.valueOf(time);
+    }
+
+    /**
+     * Converts the captured timestamp to a {@link java.sql.Timestamp} object.
+     * The timestamp is formatted in uuuu-MM-dd HH:mm:ss format.
+     *
+     * @return a java.sql.Timestamp representing the captured date and time.
+     */
+    public Timestamp toSQLTimestamp() {
+        String timestamp = getTime("uuuu-MM-dd HH:mm:ss");
+
+        return Timestamp.valueOf(timestamp);
+    }
+
+    /**
+     * Converts the captured timestamp to a {@link java.sql.Date} object.
+     * Only the date portion (uuuu-MM-dd) is used; time information is discarded.
+     *
+     * @return a java.sql.Date representing the captured date.
+     */
+    public Date toSQLDate() {
+        String date = getTime("uuuu-MM-dd");
+        
+        return Date.valueOf(date);
     }
 
     /**

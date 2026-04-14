@@ -6,10 +6,10 @@
 
     <groupId>io.github.andruid929</groupId>
     <artifactId>le-utils</artifactId>
-    <version>3.4.0</version>
+    <version>4.0.0</version>
 
     <properties>
-        <jdk.version>21</jdk.version>
+        <jdk.version>11</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -103,6 +103,8 @@
                             <head>API Note:</head>
                         </tag>
                     </tags>
+                    <failOnWarnings>true</failOnWarnings>
+                    <doclint>all</doclint>
                 </configuration>
             </plugin>
 

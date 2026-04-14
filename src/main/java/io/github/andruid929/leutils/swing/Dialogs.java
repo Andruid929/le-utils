@@ -13,6 +13,8 @@ import javax.swing.*;
  * This class provides convenient methods for showing error, information, and warning dialogs
  * with customisable titles and optional icons. Dialog titles can be configured globally
  * or default values will be used.
+ * @apiNote These dialogs are blocking calls and are best used at the end of the sequence
+ * or used with {@link SwingUtilities#invokeLater(Runnable)}.
  *
  * @author Andrew Jones
  * @since 4.0.0

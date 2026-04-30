@@ -3,39 +3,34 @@ package io.github.andruid929.leutils.config;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 class ConfigTest {
 
-    private final Path PATH_TO_CONFIG_FILE = Path.of("src", "test", "resources", "Config.tst");
+    private final List<String> SAMPLE_CONFIG_LINES = List.of(
+            "artifact:le-utils:3.2.0",
+            "MAJOR:3",
+            "JDK versions:[11, 21, 25]",
+            "Letter P:P",
+            "Christian:true",
+            "MINOR:2.0",
+            "PATCH:0",
+            "False"
+    );
 
-    private final Config TEST_CONFIG;
+    private final Config TEST_CONFIG = new Config(SAMPLE_CONFIG_LINES);
 
-    {
-        Config config;
-
-        try {
-            config = Config.readConfig(PATH_TO_CONFIG_FILE);
-        } catch (IOException e) {
-            config = new Config(List.of(
-                    "artifact:le-utils:3.2.0",
-                    "MAJOR:3",
-                    "JDK versions:[11, 21, 25]",
-                    "Letter P:P",
-                    "Christian:true",
-                    "MINOR:2.0",
-                    "PATCH:0"
-            ));
-        }
-        TEST_CONFIG = config;
-    }
-
+    /*
+     * Reads config lines, collects
+     * */
     @Test
-    void readConfigParsesValidLinesAndCollectsInvalidOnes() {
+    void readConfigLines() {
         assertEquals("le-utils:3.2.0", TEST_CONFIG.getString("artifact"));
         assertEquals(3L, TEST_CONFIG.getLong("MAJOR"));
         assertEquals(0, TEST_CONFIG.getInteger("PATCH"));
@@ -47,7 +42,7 @@ class ConfigTest {
         assertArrayEquals(new int[]{11, 21, 25}, TEST_CONFIG.getIntArray("JDK versions"));
 
         // The provided file contains only valid lines; the invalid configs list should be empty
-        assertTrue(TEST_CONFIG.getInvalidConfigs().isEmpty());
+        assertEquals(1, TEST_CONFIG.getInvalidConfigs().size());
     }
 
     @Test
@@ -96,7 +91,7 @@ class ConfigTest {
     }
 
     @Test
-    void arraysParseBracketedCsvAndHandleWhitespaceAndEmpty() {
+    void testConfigArrayParsing() {
         Config cfg = new Config(List.of(
                 "A:[a, b, c]",
                 "B:[ 1 ,  2,3 ]",
@@ -117,7 +112,7 @@ class ConfigTest {
     }
 
     @Test
-    void numberParsingThrowsNumberFormatOnMalformed() {
+    void throwsNumberFormatException() {
         Config cfg = new Config(List.of(
                 "i:notAnInt",
                 "l:9nine",
@@ -134,7 +129,7 @@ class ConfigTest {
     }
 
     @Test
-    void constructorCollectsInvalidLines() {
+    void testValidAndInvalidConfigs() {
         Config cfg = new Config(List.of(
                 "valid:1",
                 " also invalid ",   // no colon
@@ -154,14 +149,16 @@ class ConfigTest {
     }
 
     @Test
-    void persistConfigSortsKeysAndWritesSnapshot() throws IOException {
+    void testConfigPersistence(@TempDir Path tempDir) throws IOException {
         // Prepare global map
         Config.clear();
         Config.add("z", "26");
         Config.add("a", "1");
         Config.add("m", "13");
 
-        Path tmp = Path.of("target", "test-output", "persisted.cfg");
+        //Create a temporary file
+        Path tmp = Files.createTempFile(tempDir, "Persisted", ".cfg");
+
         Config.persistConfig(tmp, true);
 
         // Read back with readConfig -> should parse and be accessible

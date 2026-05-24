@@ -130,4 +130,20 @@ class TokenTest {
 
         assertTrue(toStringS.startsWith("Token") && toStringS.endsWith("]"));
     }
+
+    @Test
+    void boof() {
+        String text = "<Andrew> is a wump>";
+
+        int indexOf = text.indexOf("Andrew");
+
+        System.out.println(indexOf);
+
+        int startIndex = indexOf - 1;
+
+        int endIndex = "Andrew".length() + 1;
+
+        System.out.println(text.charAt(startIndex));
+        System.out.println(text.charAt(endIndex));
+    }
 }

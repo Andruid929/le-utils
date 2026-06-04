@@ -1,0 +1,23 @@
+v4.1.0
+
+swing/keyinput/KeyModifier
+- Added intValue and its respective getter to connect this enum to the InputEvent modifier masks
+
+swing/keyinput/Keystrokes
+- Updated logic to use InputEvent modifier builders instead of Strings
+- Added metaPlus and altGraphPlus convenience methods
+- Added tests for existing new methods
+
+README.md
+- Updated to include information about latest changes
+
+pom.xml
+- Updated junit-jupiter dependency to 6.0.3 from 5.11.4
+- Updated project version to 4.1.0
+
+modified:   README.md
+        modified:   pom.xml
+        modified:   src/main/java/io/github/andruid929/leutils/swing/keyinput/KeyModifier.java
+        modified:   src/main/java/io/github/andruid929/leutils/swing/keyinput/Keystrokes.java
+        modified:   src/test/java/io/github/andruid929/leutils/swing/keyinput/KeystrokesTest.java
+        modified:   src/test/java/io/github/andruid929/leutils/tokeniser/TokenTest.java

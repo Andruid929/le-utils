@@ -1,6 +1,55 @@
-# Le Utils v4.0.0
+# Le Utils v4.1.0
 
 A lightweight Java utility library providing helpful functions for common repetitive tasks.
+
+---
+
+## What's new?
+
+### Additions
+
+- Added convenience methods for meta and altGraph keybinds in `Keystrokes`
+
+### Bug fixes
+
+- Fixed the issue where `Keystrokes.createKeystroke()` returned invalid keystrokes
+
+---
+
+## Requirements
+
+- JDK 11 or newer
+- Dependencies:
+    - JetBrains annotations
+
+---
+
+## Installation
+
+Add the dependency to your project:
+
+### Maven
+
+In `pom.xml`:
+
+```xml
+
+<dependency>
+    <groupId>io.github.andruid929</groupId>
+    <artifactId>le-utils</artifactId>
+    <version>${version}</version>
+</dependency>
+```
+
+### Gradle
+
+In `build.gradle`:
+
+```groovy
+implementation 'io.github.andruid929:le-utils:${version}'
+```
+
+---
 
 ## Features
 
@@ -11,7 +60,7 @@ A lightweight Java utility library providing helpful functions for common repeti
     - Print errors to custom output streams
     - Handles exceptions with or without messages
     - Get stack traces from exceptions as Strings
-    - 
+    -
 
 ### String tokenisation
 
@@ -38,7 +87,7 @@ Task time calculation
 ### Data unit conversion
 
 - **DataUnit**: Enum representing units from Byte to Petabyte (binary prefix, 1024)
-- **DataUnitConversion**: 
+- **DataUnitConversion**:
     - Convert between any two data units: B, KB, MB, GB, TB, PB
     - Supports `long` and `double` precision
     - Formatted string output with unit suffixes (e.g. "1.5MB")
@@ -46,7 +95,7 @@ Task time calculation
 
 ### Formatting
 
-- **NumberFormatting**: 
+- **NumberFormatting**:
     - Format numbers with custom or default (2) decimal places
     - Automatic inclusion of standard group separators (e.g. 1,234.56)
 
@@ -67,44 +116,16 @@ Create and read configs with a simple and readable key:value pair format.
 - **Add keybinds** – Customisable key input combinations to perform tasks
 - **Dialogs** – Display simple warning, error or info dialogs
 
-## What’s new
-
-### Breaking changes
-- TimeUnitConversion.Unit enum is now a standalone enum TimeUnit inside the time package
-
 ### Dialogs
+
 - Choose to display a warning, error or information
 - Set custom titles and messages
 
 ### Keybinds
+
 - Add keybinds to swing frames
 - Single key presses or multiple combinations with shift, alt etc
 
 ### Error root tracing
+
 - Find the root cause of nested exceptions with their messages
-
-## Requirements
-
-- Java 11+
-- Dependencies:
-    - JetBrains Annotations 26.0.2
-
-## Installation
-
-### Maven
-
-In `pom.xml`:
-```xml
-<dependency>
-    <groupId>io.github.andruid929</groupId>
-    <artifactId>le-utils</artifactId>
-    <version>${latest.version}</version>
-</dependency>
-```
-
-### Gradle
-
-In `build.gradle`:
-```groovy
-implementation 'io.github.andruid929:le-utils:${latest.version}'
-```

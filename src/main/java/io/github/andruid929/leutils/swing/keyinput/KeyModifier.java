@@ -1,5 +1,7 @@
 package io.github.andruid929.leutils.swing.keyinput;
 
+import java.awt.event.InputEvent;
+
 /**
  * Represents keyboard modifier keys used in key bindings.
  * <p>
@@ -14,36 +16,39 @@ public enum KeyModifier {
     /**
      * The Control modifier key.
      */
-    CTRL("control"),
+    CTRL("control", InputEvent.CTRL_DOWN_MASK),
     /**
      * The Shift modifier key.
      */
-    SHIFT("shift"),
+    SHIFT("shift", InputEvent.SHIFT_DOWN_MASK),
     /**
      * The Meta modifier key (Command on Mac, Windows key on Windows).
      */
-    META("meta"),
+    META("meta", InputEvent.META_DOWN_MASK),
     /**
      * The Alt modifier key.
      */
-    ALT("alt"),
+    ALT("alt", InputEvent.ALT_DOWN_MASK),
     /**
      * The AltGraph modifier key (used for typing alternate characters).
      */
-    ALT_GRAPH("altGraph");
+    ALT_GRAPH("altGraph", InputEvent.ALT_GRAPH_DOWN_MASK);
 
     /**
      * The string literal representation of the modifier key.
      */
     private final String literal;
 
+    private final int modifierValue;
+
     /**
      * Creates a new KeyModifier with the specified string literal.
      *
      * @param literal the string literal representation of the modifier key
      */
-    KeyModifier(String literal) {
+    KeyModifier(String literal, int modifierValue) {
         this.literal = literal;
+        this.modifierValue = modifierValue;
     }
 
     /**
@@ -53,5 +58,14 @@ public enum KeyModifier {
      */
     public String getLiteral() {
         return literal;
+    }
+
+    /**
+     * Retrieves the integer value of the modifier key.
+     *
+     * @return the modifier value associated with this key
+     */
+    public int getModifierValue() {
+        return modifierValue;
     }
 }

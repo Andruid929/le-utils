@@ -3,11 +3,6 @@ package io.github.andruid929.leutils.swing.keyinput;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.event.KeyEvent;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import javax.swing.*;
 
 /**
@@ -61,23 +56,6 @@ public final class Keystrokes {
     }
 
     /**
-     * Creates a KeyStroke with the specified key and modifiers.
-     *
-     * @param key          the key character as a String (will be converted to uppercase)
-     * @param keyModifiers optional varargs of KeyModifier values to apply
-     * @return a KeyStroke representing the key combination
-     */
-    public static KeyStroke createKeystroke(@NotNull String key, KeyModifier... keyModifiers) {
-        String modifiers = modifierBuilder(keyModifiers);
-
-        System.out.println(modifiers);
-
-        String validKey = key.toUpperCase();
-
-        return KeyStroke.getKeyStroke(modifiers.concat(validKey).trim());
-    }
-
-    /**
      * Creates a KeyStroke with the specified key code and modifiers.
      *
      * @param keyCode      the key code from KeyEvent (e.g., KeyEvent.VK_F5)
@@ -85,11 +63,9 @@ public final class Keystrokes {
      * @return a KeyStroke representing the key combination
      */
     public static KeyStroke createKeystroke(int keyCode, KeyModifier... keyModifiers) {
-        String modifiers = modifierBuilder(keyModifiers);
+        int modifiers = modifierBuilder(keyModifiers);
 
-        String validKey = KeyEvent.getKeyText(keyCode);
-
-        return KeyStroke.getKeyStroke(modifiers.concat(validKey).trim());
+        return KeyStroke.getKeyStroke(keyCode, modifiers);
     }
 
     /**
@@ -99,7 +75,9 @@ public final class Keystrokes {
      * @return a KeyStroke representing Ctrl+key
      */
     public static KeyStroke ctrlPlus(String key) {
-        return createKeystroke(key, KeyModifier.CTRL);
+        String s = "control ".concat(key);
+
+        return KeyStroke.getKeyStroke(s);
     }
 
     /**
@@ -119,7 +97,9 @@ public final class Keystrokes {
      * @return a KeyStroke representing Shift+key
      */
     public static KeyStroke shiftPlus(String key) {
-        return createKeystroke(key, KeyModifier.SHIFT);
+        String s = "shift ".concat(key);
+
+        return KeyStroke.getKeyStroke(s);
     }
 
     /**
@@ -139,7 +119,9 @@ public final class Keystrokes {
      * @return a KeyStroke representing Alt+key
      */
     public static KeyStroke altPlus(String key) {
-        return createKeystroke(key, KeyModifier.ALT);
+        String s = "alt ".concat(key);
+
+        return KeyStroke.getKeyStroke(s);
     }
 
     /**
@@ -153,13 +135,37 @@ public final class Keystrokes {
     }
 
     /**
+     * Creates a KeyStroke with the ALT_GRAPH modifier and the specified key.
+     *
+     * @param key the key character as a String
+     * @return a KeyStroke representing AltGraph+key
+     */
+    public static KeyStroke altGraphPlus(String key) {
+        String s = "altGraph ".concat(key);
+
+        return KeyStroke.getKeyStroke(s);
+    }
+
+    /**
+     * Creates a KeyStroke with the ALT_GRAPH modifier and the specified key code.
+     *
+     * @param keyCode the key code from KeyEvent
+     * @return a KeyStroke representing AltGraph+key
+     */
+    public static KeyStroke altGraphPlus(int keyCode) {
+        return createKeystroke(keyCode, KeyModifier.ALT_GRAPH);
+    }
+
+    /**
      * Creates a KeyStroke with the CTRL and SHIFT modifiers and the specified key.
      *
      * @param key the key character as a String
      * @return a KeyStroke representing Ctrl+Shift+key
      */
     public static KeyStroke ctrlShiftPlus(String key) {
-        return createKeystroke(key, KeyModifier.CTRL, KeyModifier.SHIFT);
+        String s = "control shift ".concat(key);
+
+        return KeyStroke.getKeyStroke(s);
     }
 
     /**
@@ -173,6 +179,28 @@ public final class Keystrokes {
     }
 
     /**
+     * Creates a KeyStroke with the META modifier and the specified key.
+     *
+     * @param key the key character as a String
+     * @return a KeyStroke representing Meta+key
+     */
+    public static KeyStroke metaPlus(String key) {
+        String s = "meta ".concat(key);
+
+        return KeyStroke.getKeyStroke(s);
+    }
+
+    /**
+     * Creates a KeyStroke with the META modifier and the specified key code.
+     *
+     * @param keyCode the key code from KeyEvent (e.g., KeyEvent.VK_A)
+     * @return a KeyStroke representing Meta+key
+     */
+    public static KeyStroke metaPlus(int keyCode) {
+        return createKeystroke(keyCode, KeyModifier.META);
+    }
+
+    /**
      * Builds a modifier string from the provided KeyModifier values.
      * <p>
      * This method constructs a space-separated string of modifier literals,
@@ -182,24 +210,21 @@ public final class Keystrokes {
      * @return a space-separated string of modifier literals, or empty string if no modifiers
      */
     @Contract(pure = true)
-    static @NotNull String modifierBuilder(KeyModifier @NotNull ... modifiers) {
-        if (modifiers.length == 0) {
-            return "";
+    private static int modifierBuilder(KeyModifier @NotNull ... modifiers) {
+        int modifiersValue = 0;
+
+        if (modifiers.length < 1) {
+            return 0;
         }
 
-        Set<KeyModifier> availableModifiers = Stream.of(KeyModifier.values()).collect(Collectors.toSet());
-
-        StringBuilder builder = new StringBuilder();
-
-        for (KeyModifier modifier : modifiers) {
-            
-            if (availableModifiers.contains(modifier)) {
-                builder.append(modifier.getLiteral()).append(" ");
-
-                availableModifiers.remove(modifier);
-            }
+        if (modifiers.length == 1) {
+            return modifiers[0].getModifierValue();
         }
 
-        return builder.toString();
+        for (KeyModifier m : modifiers) {
+            modifiersValue |= m.getModifierValue();
+        }
+
+        return modifiersValue;
     }
 }

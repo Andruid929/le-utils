@@ -31,3 +31,6 @@ build/
 .DS_Store
 
 *.temp
+*.swp
+*.un~
+*~

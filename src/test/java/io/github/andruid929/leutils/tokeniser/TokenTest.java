@@ -131,3 +131,4 @@ class TokenTest {
         assertTrue(toStringS.startsWith("Token") && toStringS.endsWith("]"));
     }
 }
+

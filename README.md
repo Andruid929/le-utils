@@ -1,4 +1,4 @@
-# Le Utils v4.1.0
+# Le Utils v4.2.0
 
 A lightweight Java utility library providing helpful functions for common repetitive tasks.
 

@@ -8,11 +8,14 @@ A lightweight Java utility library providing helpful functions for common repeti
 
 ### Additions
 
-- Added convenience methods for meta and altGraph keybinds in `Keystrokes`
+- [Positioning](src/main/java/io/github/andruid929/leutils/swing/Positioning.java)
 
-### Bug fixes
+  - An interface that adds two methods to java swing components: `positionUnder()` and `positionNextTo()`,
+    places the calling component underneath and next to the target element with the specified offsets respectively.
 
-- Fixed the issue where `Keystrokes.createKeystroke()` returned invalid keystrokes
+- [PathFinder](src/main/java/io/github/andruid929/leutils/wora/PathFinder.java)
+
+  - Utility class for getting OS specific paths
 
 ---
 

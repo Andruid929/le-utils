@@ -13,7 +13,7 @@ public class PathFinderTest {
 	void testDocuments() {
 		String documents = System.getenv("HOME") + File.separator + "Documents";
 
-		assertEquals(documents, PathFinder.DOCUMENTS_FOLDER);
+		assertEquals(PathFinder.DOCUMENTS_FOLDER, documents);
 		assertEquals(Path.of(documents), PathFinder.getDocumentsFolder());
 	}
 

@@ -6,6 +6,9 @@ import java.awt.*;
 
 /**
  * Interface to ease positioning window elements next to or below other elements.
+ * <p>
+ * <b>Note:</b> This interface is meant to be implemeted only by subclasses of {@link Component}
+ * and will throw an {@link IllegalStateException} if either method is called from the illegal class object.
  *
  * @author Andrew Jones
  * @since 4.2.0 
@@ -19,11 +22,10 @@ public interface Positioning {
      * @param component the component to place this component next to
      * @param offset    the offset on the x-axis
      * @param yOffset   the optional offset for the y-axis
+	 * @throws IllegalStateException if this method is called from class that does not extend {@link Component}.
      */
-    default void positionNextTo(@NotNull Component component, int offset, int @NotNull ... yOffset) {
-        if (this instanceof Component) {
-
-			Component origin = (Component) this;
+    default void positionNextTo(@NotNull Component component, int offset, int @NotNull ... yOffset) throws IllegalStateException {
+			Component origin = requireComponent();
 
             int yAxisOffset = 0;
 
@@ -34,13 +36,6 @@ public interface Positioning {
             int elementRightEdge = component.getX() + component.getWidth();
 
             origin.setLocation(elementRightEdge + offset, component.getY() + yAxisOffset);
-
-            return;
-        }
-
-        String illegalClass = this.getClass().getName();
-
-        throw new IllegalStateException(illegalClass + " is not a child of " + Component.class.getName());
     }
 
     /**
@@ -49,12 +44,11 @@ public interface Positioning {
      * @param component the component to place this component under
      * @param offset    the offset on the y-axis
      * @param xOffset   the optional offset for the x-axis
+	 * @throws IllegalStateException if this method is called from class that does not extend {@link Component}.
      */
 
-    default void positionUnder(@NotNull Component component, int offset, int @NotNull ... xOffset) {
-        if (this instanceof Component) {
-
-			Component origin = (Component) this;
+    default void positionUnder(@NotNull Component component, int offset, int @NotNull ... xOffset) throws IllegalStateException {
+			Component origin = requireComponent();
 
             int xAxisOffset = 0;
 
@@ -65,14 +59,20 @@ public interface Positioning {
             int elementBottomEdge = component.getY() + component.getHeight();
 
             origin.setLocation(component.getX() + xAxisOffset, elementBottomEdge + offset);
+    }
 
-            return;
+    /**
+     * Checks if this object is a child of {@link Component}
+     */
+
+    private Component requireComponent() {
+        if (this instanceof Component) {
+            return (Component) this;
         }
 
         String illegalClass = this.getClass().getName();
 
         throw new IllegalStateException(illegalClass + " is not a child of " + Component.class.getName());
     }
-
 }
 

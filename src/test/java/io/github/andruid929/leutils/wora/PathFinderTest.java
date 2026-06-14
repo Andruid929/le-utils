@@ -11,7 +11,7 @@ public class PathFinderTest {
 
 	@Test	
 	void testDocuments() {
-		String documents = System.getenv("HOME") + File.separator + "Documents";
+		String documents = System.getProperty("user.home") + File.separator + "Documents";
 
 		assertEquals(PathFinder.DOCUMENTS_FOLDER, documents);
 		assertEquals(Path.of(documents), PathFinder.getDocumentsFolder());

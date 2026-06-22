@@ -4,6 +4,7 @@ import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.event.ActionEvent;
 import java.util.Objects;
 
 import javax.swing.*;
@@ -38,22 +39,25 @@ public final class Keybind {
     private final Action action;
 
     /**
-     * Creates a new keybind and registers it with the specified JFrame.
+     * Constructs a Keybind object that registers a keystroke-action mapping
+     * in the specified JFrame.
      *
-     * @param frame      the JFrame to attach this keybind to
+     * @param frame      the JFrame to attach the keybind to
      * @param keyForBind the unique identifier key for this keybind
-     * @param keyStroke  the keystroke that will trigger the action
+     * @param keystroke  the keystroke that will trigger the action
      * @param action     the action to execute when the keystroke is triggered
+     * @param condition  optional varargs specifying the InputMap condition
+     *                   (e.g., WHEN_FOCUSED, WHEN_IN_FOCUSED_WINDOW, or
+     *                   WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
      */
-    public Keybind(JFrame frame, @NonNls Object keyForBind, KeyStroke keyStroke, Action action) {
+    public Keybind(JFrame frame, @NonNls Object keyForBind, KeyStroke keystroke, Action action, int @NotNull ... condition) {
         this.frame = frame;
         this.keyForBind = keyForBind;
-        this.keyStroke = keyStroke;
+        this.keyStroke = keystroke;
         this.action = action;
 
-        addKeybind(frame, keyForBind, keyStroke, action);
+        addKeybind(frame, keyForBind, keystroke, action, condition);
     }
-
 
     /**
      * Adds a keybind to the specified JFrame with optional input map conditions.
@@ -85,6 +89,30 @@ public final class Keybind {
         im.put(keyStroke, keyForBind);
 
         am.put(keyForBind, action);
+    }
+
+    /**
+     * Adds a keybind to the specified JFrame with optional input map conditions.
+     *
+     * @param frame      the JFrame to attach the keybind to
+     * @param keyForBind the unique identifier key for this keybind
+     * @param keystroke  the keystroke that will trigger the task
+     * @param task       the {@link Runnable} task to execute when the keystroke is triggered
+     * @param condition  optional varargs specifying the InputMap condition (e.g.,
+     *                   {@link JOptionPane#WHEN_IN_FOCUSED_WINDOW})
+     * @apiNote This method uses {@link AbstractAction} as the {@link Action action} implementation, if you want a different
+     * implementation, use {@link #addKeybind(JFrame, Object, KeyStroke, Action, int...)}
+     * @since 4.3.0
+     */
+    public static void addKeybind(@NotNull JFrame frame, @NonNls Object keyForBind, KeyStroke keystroke, Runnable task, int @NotNull ... condition) {
+        AbstractAction action = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                task.run();
+            }
+        };
+
+        addKeybind(frame, keyForBind, keystroke, action, condition);
     }
 
     /**
@@ -156,5 +184,5 @@ public final class Keybind {
                 "keyStroke=" + keyStroke + ", " +
                 "action=" + action + ']';
     }
-    
+
 }

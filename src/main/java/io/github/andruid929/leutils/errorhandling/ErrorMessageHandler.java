@@ -52,13 +52,13 @@ public final class ErrorMessageHandler {
      * Optionally, the exception's class name and error message can be included at the top
      * of the stack trace.
      *
-     * @param e the exception or throwable whose stack trace is to be retrieved.
+     * @param e                       the exception or throwable whose stack trace is to be retrieved.
      * @param includeExceptionMessage if {@code true}, the exception's class name and
      *                                error message are included at the top of the stack trace.
      *                                If {@code false} or not specified, only the stack trace
      *                                is returned.
      * @return the formatted stack trace as a string. If {@code includeExceptionMessage} is
-     *         {@code true}, the exception class name and message are prefixed to the stack trace.
+     * {@code true}, the exception class name and message are prefixed to the stack trace.
      */
     public static String getStackTrace(@NotNull Throwable e, boolean @NotNull ... includeExceptionMessage) {
         Stream<String> stream = Arrays.stream(e.getStackTrace())

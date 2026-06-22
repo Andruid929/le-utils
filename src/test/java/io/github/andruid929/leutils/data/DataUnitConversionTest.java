@@ -44,15 +44,15 @@ class DataUnitConversionTest {
         // Without rounding
         assertEquals("1024.0B", DataUnitConversion.formatWithUnit(1.0, DataUnit.KILOBYTE, DataUnit.BYTE));
         assertEquals("0.5MB", DataUnitConversion.formatWithUnit(512.0, DataUnit.KILOBYTE, DataUnit.MEGABYTE));
-        
+
         // With rounding (NumberFormatting.formatNumber uses 2 decimal places and #,### pattern)
         assertEquals("1,024B", DataUnitConversion.formatWithUnit(1.0, DataUnit.KILOBYTE, DataUnit.BYTE, true));
         assertEquals("0.5MB", DataUnitConversion.formatWithUnit(512.0, DataUnit.KILOBYTE, DataUnit.MEGABYTE, true));
-        
+
         // 1 Byte to Gigabyte is 1 / (1024^3) = 9.313225746154785E-10
         // NumberFormatting.formatNumber(9.313225746154785E-10) with 2 decimal places will be "0"
         assertEquals("0GB", DataUnitConversion.formatWithUnit(1.0, DataUnit.BYTE, DataUnit.GIGABYTE, true));
-        
+
         assertEquals("0.25MB", DataUnitConversion.formatWithUnit(256.0, DataUnit.KILOBYTE, DataUnit.MEGABYTE, true));
     }
 
@@ -64,7 +64,7 @@ class DataUnitConversionTest {
         // Long.MAX_VALUE = 9,223,372,036,854,775,807
         // Upon overflow, it wraps around in standard Java long multiplication
         long overflowValue = DataUnitConversion.calculate(9000L, DataUnit.PETABYTE, DataUnit.BYTE);
-        
+
         // 10,133,099,161,583,616,000 (mod 2^64)
         // = 10,133,099,161,583,616,000 - 18,446,744,073,709,551,616
         // = -8,313,644,912,125,935,616

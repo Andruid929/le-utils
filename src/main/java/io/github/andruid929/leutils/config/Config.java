@@ -106,6 +106,175 @@ public final class Config {
     }
 
     /**
+     * Adds or replaces a global configuration entry with a string value.
+     *
+     * @param key   non-null configuration key
+     * @param value value to store; may be {@code null}
+     */
+
+    public static void add(@NotNull String key, String value) {
+        configs.put(key, value);
+    }
+
+    /**
+     * Adds or replaces a global configuration entry with a numeric value.
+     *
+     * @param key   non-null configuration key
+     * @param value non-null numeric value
+     * @throws IllegalArgumentException if {@code value} is {@code null}
+     */
+
+    public static void add(@NotNull String key, Number value) {
+        if (value == null) {
+            throw new IllegalArgumentException("Null values not accepted");
+        }
+
+        add(key, String.valueOf(value));
+    }
+
+    /**
+     * Adds or replaces a global configuration entry with a boolean value.
+     *
+     * @param key   non-null configuration key
+     * @param value boolean value
+     */
+
+    public static void add(@NotNull String key, boolean value) {
+        add(key, String.valueOf(value));
+    }
+
+    /**
+     * Adds or replaces a global configuration entry with an array value. The array is serialized
+     * using {@link Arrays#toString(Object[])} (e.g., {@code [a, b, c]}).
+     *
+     * @param key   non-null configuration key
+     * @param value array value; treated as {@code []} if empty
+     */
+
+    public static void add(@NotNull String key, Object[] value) {
+        String arrayString = Arrays.toString(value);
+
+        add(key, arrayString);
+    }
+
+    /**
+     * Adds or replaces a global configuration entry with a single character value.
+     *
+     * @param key   non-null configuration key
+     * @param value character value
+     */
+
+    public static void add(@NotNull String key, char value) {
+        add(key, String.valueOf(value));
+    }
+
+    /**
+     * Returns the number of entries in the global configuration map.
+     *
+     * @return the count of global configuration entries
+     */
+    public static int numberOfConfigs() {
+        return configs.size();
+    }
+
+    /**
+     * Removes a global configuration entry if present.
+     *
+     * @param key configuration key
+     * @return {@code true} if an entry was removed; {@code false} otherwise
+     */
+
+    public static boolean remove(String key) {
+
+        if (configs.isEmpty()) {
+            return false;
+        }
+
+        int sizeBefore = numberOfConfigs();
+
+        configs.remove(key);
+
+        return numberOfConfigs() == sizeBefore - 1;
+    }
+
+    /**
+     * Clears all configuration entries from the global configurations list.
+     */
+    public static void clear() {
+        configs.clear();
+    }
+
+    /**
+     * Persists the current global configuration map to a file. Entries are written as {@code key:value}
+     * per line with keys sorted for deterministic output. A snapshot of the map is taken to avoid
+     * concurrent modification and to guarantee stable ordering.
+     *
+     * @param savePath             path to the destination file
+     * @param createMissingFolders if {@code true}, missing parent directories are created
+     * @throws IOException if an I/O error occurs while writing
+     */
+
+    public static void persistConfig(@NotNull Path savePath, boolean createMissingFolders) throws IOException {
+        if (configs.isEmpty()) {
+            return;
+        }
+
+        if (createMissingFolders) {
+            Path folders = savePath.getParent();
+
+            if (folders != null) {
+                Files.createDirectories(folders);
+            }
+        }
+
+        Map<String, String> snapshot = new HashMap<>(configs);
+
+        String configsString = snapshot.keySet().stream()
+                .sorted()
+                .map(key -> {
+                    String value = snapshot.get(key);
+
+                    return key.concat(":").concat(value);
+                })
+                .collect(Collectors.joining(System.lineSeparator()));
+
+        try (OutputStream outStream = Files.newOutputStream(savePath, CREATE, TRUNCATE_EXISTING);
+             BufferedOutputStream stream = new BufferedOutputStream(outStream)) {
+
+            stream.write(configsString.getBytes(StandardCharsets.UTF_8));
+        }
+    }
+
+    /**
+     * Reads configuration lines from a file and returns an immutable {@link Config} instance
+     * built from those lines. Each file line is treated as a raw entry and parsed as
+     * {@code key:value} during construction. Missing files yield an empty configuration.
+     *
+     * @param configPath path to the configuration file
+     * @return an immutable {@link Config} built from the file contents
+     * @throws IOException if an I/O error occurs while reading
+     */
+
+    public static @NotNull Config readConfig(Path configPath) throws IOException {
+        if (Files.notExists(configPath)) {
+            return new Config(new ArrayList<>());
+        }
+
+        try (BufferedReader reader = Files.newBufferedReader(configPath, StandardCharsets.UTF_8)) {
+
+            List<String> configLines = new ArrayList<>();
+
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                configLines.add(line);
+            }
+
+            return new Config(configLines);
+        }
+    }
+
+    /**
      * Returns an immutable list of input lines that were not valid {@code key:value} pairs.
      * Lines are trimmed as they appeared to the parser.
      *
@@ -301,174 +470,5 @@ public final class Config {
         }
 
         return value;
-    }
-
-    /**
-     * Adds or replaces a global configuration entry with a string value.
-     *
-     * @param key   non-null configuration key
-     * @param value value to store; may be {@code null}
-     */
-
-    public static void add(@NotNull String key, String value) {
-        configs.put(key, value);
-    }
-
-    /**
-     * Adds or replaces a global configuration entry with a numeric value.
-     *
-     * @param key   non-null configuration key
-     * @param value non-null numeric value
-     * @throws IllegalArgumentException if {@code value} is {@code null}
-     */
-
-    public static void add(@NotNull String key, Number value) {
-        if (value == null) {
-            throw new IllegalArgumentException("Null values not accepted");
-        }
-
-        add(key, String.valueOf(value));
-    }
-
-    /**
-     * Adds or replaces a global configuration entry with a boolean value.
-     *
-     * @param key   non-null configuration key
-     * @param value boolean value
-     */
-
-    public static void add(@NotNull String key, boolean value) {
-        add(key, String.valueOf(value));
-    }
-
-    /**
-     * Adds or replaces a global configuration entry with an array value. The array is serialized
-     * using {@link Arrays#toString(Object[])} (e.g., {@code [a, b, c]}).
-     *
-     * @param key   non-null configuration key
-     * @param value array value; treated as {@code []} if empty
-     */
-
-    public static void add(@NotNull String key, Object[] value) {
-        String arrayString = Arrays.toString(value);
-
-        add(key, arrayString);
-    }
-
-    /**
-     * Adds or replaces a global configuration entry with a single character value.
-     *
-     * @param key   non-null configuration key
-     * @param value character value
-     */
-
-    public static void add(@NotNull String key, char value) {
-        add(key, String.valueOf(value));
-    }
-
-    /**
-     * Returns the number of entries in the global configuration map.
-     *
-     * @return the count of global configuration entries
-     */
-    public static int numberOfConfigs() {
-        return configs.size();
-    }
-
-    /**
-     * Removes a global configuration entry if present.
-     *
-     * @param key configuration key
-     * @return {@code true} if an entry was removed; {@code false} otherwise
-     */
-
-    public static boolean remove(String key) {
-
-        if (configs.isEmpty()) {
-            return false;
-        }
-
-        int sizeBefore = numberOfConfigs();
-
-        configs.remove(key);
-
-        return numberOfConfigs() == sizeBefore - 1;
-    }
-
-    /**
-     * Clears all configuration entries from the global configurations list.
-     */
-    public static void clear() {
-        configs.clear();
-    }
-
-    /**
-     * Persists the current global configuration map to a file. Entries are written as {@code key:value}
-     * per line with keys sorted for deterministic output. A snapshot of the map is taken to avoid
-     * concurrent modification and to guarantee stable ordering.
-     *
-     * @param savePath             path to the destination file
-     * @param createMissingFolders if {@code true}, missing parent directories are created
-     * @throws IOException if an I/O error occurs while writing
-     */
-
-    public static void persistConfig(@NotNull Path savePath, boolean createMissingFolders) throws IOException {
-        if (configs.isEmpty()) {
-            return;
-        }
-
-        if (createMissingFolders) {
-            Path folders = savePath.getParent();
-
-            if (folders != null) {
-                Files.createDirectories(folders);
-            }
-        }
-
-        Map<String, String> snapshot = new HashMap<>(configs);
-
-        String configsString = snapshot.keySet().stream()
-                .sorted()
-                .map(key -> {
-                    String value = snapshot.get(key);
-
-                    return key.concat(":").concat(value);
-                })
-                .collect(Collectors.joining(System.lineSeparator()));
-
-        try (OutputStream outStream = Files.newOutputStream(savePath, CREATE, TRUNCATE_EXISTING);
-             BufferedOutputStream stream = new BufferedOutputStream(outStream)) {
-
-            stream.write(configsString.getBytes(StandardCharsets.UTF_8));
-        }
-    }
-
-    /**
-     * Reads configuration lines from a file and returns an immutable {@link Config} instance
-     * built from those lines. Each file line is treated as a raw entry and parsed as
-     * {@code key:value} during construction. Missing files yield an empty configuration.
-     *
-     * @param configPath path to the configuration file
-     * @return an immutable {@link Config} built from the file contents
-     * @throws IOException if an I/O error occurs while reading
-     */
-
-    public static @NotNull Config readConfig(Path configPath) throws IOException {
-        if (Files.notExists(configPath)) {
-            return new Config(new ArrayList<>());
-        }
-
-        try (BufferedReader reader = Files.newBufferedReader(configPath, StandardCharsets.UTF_8)) {
-
-            List<String> configLines = new ArrayList<>();
-
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                configLines.add(line);
-            }
-
-            return new Config(configLines);
-        }
     }
 }

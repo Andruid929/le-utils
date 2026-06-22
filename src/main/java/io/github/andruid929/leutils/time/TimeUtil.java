@@ -6,7 +6,10 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Calendar;
@@ -49,6 +52,47 @@ public class TimeUtil {
      */
     TimeUtil() {
         nowInstant = Instant.now().toEpochMilli();
+    }
+
+    /**
+     * Creates a new TimeUtil instance capturing the current moment in time.
+     * This is the factory method for creating TimeUtil instances.
+     *
+     * @return a new TimeUtil instance with the current timestamp.
+     */
+    @Contract(" -> new")
+    public static @NotNull TimeUtil captureInstant() {
+        return new TimeUtil();
+    }
+
+    /**
+     * Parses a given ISO-8601 formatted time string into a {@link TimeUtil} instance.
+     * The provided string must conform to the {@link DateTimeFormatter#ISO_OFFSET_DATE_TIME} standard.
+     *
+     * @param timeString the ISO-8601 formatted time string to be parsed, e.g. "2023-03-15T10:15:30+01:00".
+     * @return a {@link TimeUtil} instance representing the parsed time.
+     * @throws DateTimeParseException if the string cannot be parsed as a valid ISO-8601 date-time.
+     * @throws NullPointerException   if the provided time string is null.
+     */
+    public static @NotNull TimeUtil parseFromString(String timeString) {
+        ZonedDateTime time = ZonedDateTime.parse(timeString, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+
+        return new TimeUtil() {
+            @Override
+            public long getEpochMillis() {
+                return time.toInstant().toEpochMilli();
+            }
+        };
+    }
+
+    /**
+     * Returns the current system time in epoch milliseconds.
+     * This is a static utility method that does not create a TimeUtil instance.
+     *
+     * @return the current time in milliseconds since the Unix epoch.
+     */
+    public static long getNow() {
+        return Instant.now().toEpochMilli();
     }
 
     /**
@@ -209,7 +253,7 @@ public class TimeUtil {
      */
     public Date toSQLDate() {
         String date = getTime("uuuu-MM-dd");
-        
+
         return Date.valueOf(date);
     }
 
@@ -220,7 +264,7 @@ public class TimeUtil {
      */
     public Calendar toCalendar() {
         TimeZone timeZone = TimeZone.getTimeZone(ZoneId.systemDefault());
-        
+
         Calendar calendar = Calendar.getInstance(timeZone);
 
         calendar.setTimeInMillis(getEpochMillis());
@@ -255,47 +299,6 @@ public class TimeUtil {
      */
     public ZonedDateTime toZonedDateTime(ZoneId zoneId) {
         return toInstant().atZone(zoneId);
-    }
-
-    /**
-     * Creates a new TimeUtil instance capturing the current moment in time.
-     * This is the factory method for creating TimeUtil instances.
-     *
-     * @return a new TimeUtil instance with the current timestamp.
-     */
-    @Contract(" -> new")
-    public static @NotNull TimeUtil captureInstant() {
-        return new TimeUtil();
-    }
-
-    /**
-     * Parses a given ISO-8601 formatted time string into a {@link TimeUtil} instance.
-     * The provided string must conform to the {@link DateTimeFormatter#ISO_OFFSET_DATE_TIME} standard.
-     *
-     * @param timeString the ISO-8601 formatted time string to be parsed, e.g. "2023-03-15T10:15:30+01:00".
-     * @return a {@link TimeUtil} instance representing the parsed time.
-     * @throws DateTimeParseException if the string cannot be parsed as a valid ISO-8601 date-time.
-     * @throws NullPointerException if the provided time string is null.
-     */
-    public static @NotNull TimeUtil parseFromString(String timeString) {
-        ZonedDateTime time = ZonedDateTime.parse(timeString, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-
-        return new TimeUtil() {
-            @Override
-            public long getEpochMillis() {
-                return time.toInstant().toEpochMilli();
-            }
-        };
-    }
-
-    /**
-     * Returns the current system time in epoch milliseconds.
-     * This is a static utility method that does not create a TimeUtil instance.
-     *
-     * @return the current time in milliseconds since the Unix epoch.
-     */
-    public static long getNow() {
-        return Instant.now().toEpochMilli();
     }
 
     @Override

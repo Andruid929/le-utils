@@ -16,7 +16,7 @@ class KeystrokesTest {
         KeyStroke keyStroke = Keystrokes.createKeystroke('A', KeyModifier.CTRL);
 
         assertNotNull(keyStroke);
-        
+
         assertEquals(KeyStroke.getKeyStroke('A', CTRL_DOWN_MASK), keyStroke);
     }
 

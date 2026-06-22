@@ -1,10 +1,10 @@
 package io.github.andruid929.leutils.errorhandling;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ErrorMessageHandlerTest {
 

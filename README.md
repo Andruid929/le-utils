@@ -1,21 +1,34 @@
-# Le Utils v4.2.0
+# Le Utils v4.3.0
 
 A lightweight Java utility library providing helpful functions for common repetitive tasks.
 
 ---
+## Table of contents
 
-## What's new?
+- [What's new](#whats-new-)
+- [Requirements](#requirements)
+- [Adding the library](#using-the-library)
+  - [Maven](#maven)
+  - [Gradle](#gradle)
+- [Features](#features)
+---
+
+## What's new? 
 
 ### Additions
 
-- [Positioning](src/main/java/io/github/andruid929/leutils/swing/Positioning.java)
+- **Dialogs**
+    - Added confirmation dialogs
 
-  - An interface that adds two methods to java swing components: `positionUnder()` and `positionNextTo()`,
-    places the calling component underneath and next to the target element with the specified offsets respectively.
+- **Keybinds**
+    - Added a static `addKeybind` method to add a keybind using a `Runnable` task instead
+      of the default `Action`.
 
-- [PathFinder](src/main/java/io/github/andruid929/leutils/wora/PathFinder.java)
+### Changes
 
-  - Utility class for getting OS specific paths
+- **Keybinds**
+    - Added an optional parameter to the `Keybind` constructor where you can specify
+      the keybind's condition.
 
 ---
 
@@ -27,7 +40,7 @@ A lightweight Java utility library providing helpful functions for common repeti
 
 ---
 
-## Installation
+## Using the library
 
 Add the dependency to your project:
 
@@ -63,7 +76,6 @@ implementation 'io.github.andruid929:le-utils:${version}'
     - Print errors to custom output streams
     - Handles exceptions with or without messages
     - Get stack traces from exceptions as Strings
-    -
 
 ### String tokenisation
 
@@ -116,8 +128,8 @@ Create and read configs with a simple and readable key:value pair format.
 
 ### Swing utilities
 
-- **Add keybinds** – Customisable key input combinations to perform tasks
-- **Dialogs** – Display simple warning, error or info dialogs
+- **Keybinds** – Customisable key input combinations to perform tasks
+- **Dialogs** – Display simple warning, error, info or confirmation dialogs
 
 ### Dialogs
 
@@ -132,3 +144,7 @@ Create and read configs with a simple and readable key:value pair format.
 ### Error root tracing
 
 - Find the root cause of nested exceptions with their messages
+
+### Unix/Windows path handler
+
+- Get OS specific paths

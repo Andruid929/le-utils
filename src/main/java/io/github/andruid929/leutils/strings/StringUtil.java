@@ -57,8 +57,8 @@ public final class StringUtil {
      * after trimming surrounding whitespace.
      * If {@code charsToTrim <= 0} or the operation would over-trim, returns the trimmed input unchanged.
      *
-     * @param input        non-null input string
-     * @param charsToTrim  number of characters to remove from both ends
+     * @param input       non-null input string
+     * @param charsToTrim number of characters to remove from both ends
      * @return the trimmed-and-sliced substring, or the trimmed input if not applicable
      */
 
@@ -143,8 +143,8 @@ public final class StringUtil {
      * Splits the input by a regex delimiter and returns an unmodifiable list.
      * For literal delimiters, prefer {@link #literalSeparateAsList(String, String)}.
      *
-     * @param input           non-null input string
-     * @param regexDelimiter  a regex delimiter used by String#split
+     * @param input          non-null input string
+     * @param regexDelimiter a regex delimiter used by String#split
      * @return unmodifiable list of parts (possibly empty)
      */
 
@@ -172,8 +172,8 @@ public final class StringUtil {
      * Splits the input by a regex delimiter and returns an unmodifiable set of unique parts.
      * For literal delimiters, prefer {@link #literalSeparateAsSet(String, String)}.
      *
-     * @param input           non-null input string
-     * @param regexDelimiter  a regex delimiter used by String#split
+     * @param input          non-null input string
+     * @param regexDelimiter a regex delimiter used by String#split
      * @return unmodifiable set of parts (possibly empty)
      */
 

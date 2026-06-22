@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
  * Provides conversion factors and helper methods for converting values between these units.
  * The underlying base is 1,024 (binary prefix).
  *
- * @since 3.4.0
  * @author Andrew Jones
+ * @since 3.4.0
  */
 public enum DataUnit {
     /**

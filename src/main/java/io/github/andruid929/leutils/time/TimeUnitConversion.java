@@ -1,6 +1,7 @@
 package io.github.andruid929.leutils.time;
 
 import org.jetbrains.annotations.NotNull;
+
 /**
  * Utility class for converting between different time units.
  * <p>
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  * @since 2.2.0
  */
 public class TimeUnitConversion {
-    
+
     /**
      * Private constructor to prevent instantiation of this utility class.
      */

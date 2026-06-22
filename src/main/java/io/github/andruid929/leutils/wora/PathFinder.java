@@ -1,95 +1,96 @@
 package io.github.andruid929.leutils.wora;
 
-import java.nio.file.Path;
-
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.Path;
+
 /**
-* Utility class for resolving paths specific to an operating system.
-* This supports Windows, Mac and Linux. For example, the {@link #USER_HOME field}
-* will return {@code C:\Users\Username} on Windows and {@code /home/username/} on Linux.
-* 
-* @author Andrew Jones
-* @since 4.2.0
-*/
+ * Utility class for resolving paths specific to an operating system.
+ * This supports Windows, Mac and Linux. For example, the {@link #USER_HOME field}
+ * will return {@code C:\Users\Username} on Windows and {@code /home/username/} on Linux.
+ *
+ * @author Andrew Jones
+ * @since 4.2.0
+ */
 
 public class PathFinder {
 
-	/**
-	* This field represents the OS specific path to the user's home directory
-	*/
+    /**
+     * This field represents the OS specific path to the user's home directory
+     */
 
-	public static final String USER_HOME = System.getProperty("user.home");
+    public static final String USER_HOME = System.getProperty("user.home");
 
-	/**
-	* This field represents the OS specific path to the user's documents directory
-	*/
+    /**
+     * This field represents the OS specific path to the user's documents directory
+     */
 
-	public static final String DOCUMENTS_FOLDER = getDocumentsFolder().toString();
+    public static final String DOCUMENTS_FOLDER = getDocumentsFolder().toString();
 
-	/**
-	* This field represents the OS specific path to the user's app data directory
-	*/
+    /**
+     * This field represents the OS specific path to the user's app data directory
+     */
 
-	public static final String APPDATA_FOLDER = getAppDataFolder().toString();
+    public static final String APPDATA_FOLDER = getAppDataFolder().toString();
 
-	private PathFinder() {}
+    private PathFinder() {
+    }
 
-	/**
-	* Get the path to the documents folder
-	*
-	* @return the Path to the OS documents folder
-	*/
+    /**
+     * Get the path to the documents folder
+     *
+     * @return the Path to the OS documents folder
+     */
 
-	public static Path getDocumentsFolder() {
-		return Path.of(USER_HOME, "Documents");
-	}
+    public static Path getDocumentsFolder() {
+        return Path.of(USER_HOME, "Documents");
+    }
 
-	/**
-	* Get the path to the appdata folder
-	*
-	* @return the Path to the OS app data folder
-	*/
+    /**
+     * Get the path to the appdata folder
+     *
+     * @return the Path to the OS app data folder
+     */
 
-	public static Path getAppDataFolder() {
-		String os = System.getProperty("os.name").toLowerCase();
+    public static Path getAppDataFolder() {
+        String os = System.getProperty("os.name").toLowerCase();
 
-		if(os.contains("win")) {
-			String appDataPath = System.getenv("APPDATA");
+        if (os.contains("win")) {
+            String appDataPath = System.getenv("APPDATA");
 
-			return Path.of(appDataPath);
-			
-		} else if(os.contains("mac")) {
-			return Path.of(USER_HOME, "Library", "Application Support");
+            return Path.of(appDataPath);
 
-		} else {
-			return Path.of(USER_HOME, ".config");
-		}
-	}
+        } else if (os.contains("mac")) {
+            return Path.of(USER_HOME, "Library", "Application Support");
 
-	/**
-	* Get a single folder extending from user home. This method is the simpler version of
-	* {@link #createPathFromHomeRoot(String...)}.
-	*
-	* @return a single folder extending from the user home directory
-	* @param directory the folder to get within the user home directory.
-	*/
+        } else {
+            return Path.of(USER_HOME, ".config");
+        }
+    }
 
-	public static Path getUserFolder(@NotNull String directory) {
-		return Path.of(USER_HOME, directory);
-	}
+    /**
+     * Get a single folder extending from user home. This method is the simpler version of
+     * {@link #createPathFromHomeRoot(String...)}.
+     *
+     * @param directory the folder to get within the user home directory.
+     * @return a single folder extending from the user home directory
+     */
 
-	/**
-	* This method creates a path extending from {@link #USER_HOME}.
-	* Usage example: {@code Path.createFromHomeRoot(".m2", "repository")}
-	* will return {@code /home/username/.m2/repository} on Linux and
-	* {@code C:\Users\Username\.m2\repository}.
-	*
-	* @return a path of the specified folders extending from the user's {@link #USER_HOME home directory}
-	* @param directories the folders to be added to the path in order
-	*/
+    public static Path getUserFolder(@NotNull String directory) {
+        return Path.of(USER_HOME, directory);
+    }
 
-	public static Path createPathFromHomeRoot(String @NotNull ... directories) {
-		return Path.of(USER_HOME, directories);
-	}
+    /**
+     * This method creates a path extending from {@link #USER_HOME}.
+     * Usage example: {@code Path.createFromHomeRoot(".m2", "repository")}
+     * will return {@code /home/username/.m2/repository} on Linux and
+     * {@code C:\Users\Username\.m2\repository}.
+     *
+     * @param directories the folders to be added to the path in order
+     * @return a path of the specified folders extending from the user's {@link #USER_HOME home directory}
+     */
+
+    public static Path createPathFromHomeRoot(String @NotNull ... directories) {
+        return Path.of(USER_HOME, directories);
+    }
 }

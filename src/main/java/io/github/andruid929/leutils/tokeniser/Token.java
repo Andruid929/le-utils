@@ -23,32 +23,28 @@ import java.util.stream.Collectors;
 public final class Token {
 
     /**
+     * Regex pattern to match flags: a single dash followed by a letter (A-Z or a-z).
+     * Uses negative lookbehind to ensure it's not preceded by another dash.
+     */
+    private static final Pattern FLAGS_PATTERN = Pattern.compile("^(?<!-)-[A-Za-z]"); //Single dash followed by a letter
+    /**
      * List of arguments in the given String.
      */
 
     private final List<String> arguments;
-
     /**
      * List of flags (single dash arguments) in the given String.
      */
     private final List<String> flags;
-
     /**
      * List of options (double dash arguments) in the given String.
      */
     private final List<String> options;
-
     /**
      * Argument string builder.
      */
 
     private final StringBuilder argumentBuilder;
-
-    /**
-     * Regex pattern to match flags: a single dash followed by a letter (A-Z or a-z).
-     * Uses negative lookbehind to ensure it's not preceded by another dash.
-     */
-    private static final Pattern FLAGS_PATTERN = Pattern.compile("^(?<!-)-[A-Za-z]"); //Single dash followed by a letter
 
     /**
      * Instantiate arguments list and builder and collect arguments from the String.

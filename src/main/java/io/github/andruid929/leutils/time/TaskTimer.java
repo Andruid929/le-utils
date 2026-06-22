@@ -19,10 +19,10 @@ import org.jetbrains.annotations.NotNull;
  * }</pre>
  *
  * @author Andrew Jones
- * @since 3.0.0
  * @apiNote <strong>Thread Safety:</strong> This class is designed for single-threaded use only.
  * It should not be shared across multiple threads without
  * external synchronisation.
+ * @since 3.0.0
  */
 public final class TaskTimer {
 

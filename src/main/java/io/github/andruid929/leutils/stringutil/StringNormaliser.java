@@ -1,10 +1,8 @@
 package io.github.andruid929.leutils.stringutil;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.regex.Pattern;
 
-import io.github.andruid929.leutils.strings.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Utility class for string normalisation tasks, such as URL formatting.
@@ -54,6 +52,9 @@ public final class StringNormaliser {
          */
         HYPHEN("-");
 
+        /**
+         * Replacement text used for spaces in the selected mode.
+         */
         public final String literalReplacement;
 
         SpaceMode(String literalReplacement) {

@@ -215,6 +215,9 @@ public final class StringUtil {
          */
         HYPHEN("-");
 
+        /**
+         * Replacement text used for spaces in the selected mode.
+         */
         public final String literalReplacement;
 
         SpaceMode(String literalReplacement) {

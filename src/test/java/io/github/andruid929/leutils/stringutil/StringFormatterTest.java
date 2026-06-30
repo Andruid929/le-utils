@@ -1,9 +1,12 @@
 package io.github.andruid929.leutils.stringutil;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
+@Execution(ExecutionMode.SAME_THREAD)
 class StringFormatterTest {
 
     @Test
@@ -78,5 +81,25 @@ class StringFormatterTest {
         String input = "Hi, I am {} and it is {}℃ out";
 
         assertEquals("Hi, I am Andrew and it is 25℃ out", StringFormatter.interpolate(input, "Andrew", 25));
+        assertEquals("Hi, I am Andrew and it is 25℃ out", StringFormatter.interpolate(input, "Andrew", 25, "extra arg"));
+        assertEquals("Hi, I am Andrew and it is {}℃ out", StringFormatter.interpolate(input, "Andrew"));
+        assertEquals("Hi, I am {} and it is {}℃ out", StringFormatter.interpolate(input));
+
+        String invalidCurlyBraceFormatString = "Hi, I am { } and it is {}℃ out";
+
+        assertEquals("Hi, I am { } and it is 25℃ out", StringFormatter.interpolate(invalidCurlyBraceFormatString, 25));
+
+        assertThrows(IllegalArgumentException.class, () -> StringFormatter.interpolate(input, null, "25"));
+
+        try {
+            StringFormatter.setInterpolateFailsOnNull(false);
+
+            assertEquals("Hi, I am null and it is 25℃ out", StringFormatter.interpolate(input, null, 25));
+            // Additional test case: mixed object types
+            assertEquals("Mixed: 1, 2.0, string", StringFormatter.interpolate("Mixed: {}, {}, {}", 1, 2.0, "string"));
+
+        } finally {
+            StringFormatter.setInterpolateFailsOnNull(true);
+        }
     }
 }

@@ -169,6 +169,17 @@ public final class Config {
     }
 
     /**
+     * Get a global loaded config.
+     *
+     * @param key the key for the desired config
+     * @return the value for the given key or null if the key is invalid
+     */
+
+    public static String get(@NotNull String key) {
+        return configs.get(key);
+    }
+
+    /**
      * Returns the number of entries in the global configuration map.
      *
      * @return the count of global configuration entries
@@ -183,6 +194,7 @@ public final class Config {
      * @param key configuration key
      * @return {@code true} if an entry was removed; {@code false} otherwise
      */
+
 
     public static boolean remove(String key) {
 

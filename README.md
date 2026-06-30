@@ -1,4 +1,4 @@
-# Le Utils v4.3.0
+# Le Utils v4.4.0
 
 A lightweight Java utility library providing helpful functions for common repetitive tasks.
 
@@ -13,22 +13,35 @@ A lightweight Java utility library providing helpful functions for common repeti
 - [Features](#features)
 ---
 
+## Notice board
+
+### Deprecation notice
+
+**_[Strings package](src/main/java/io/github/andruid929/leutils/strings)_**
+- [StringUtil](src/main/java/io/github/andruid929/leutils/strings/StringUtil.java) class is deprecated and will be removed in v5.0.0
+- Class functions have been moved to the [stringutil](src/main/java/io/github/andruid929/leutils/stringutil) package
+- New usage:
+  ```java
+  //Instead of StringUtil.trimCharacters("(name=Andrew), 1";
+  StringFormatter.trimCharacters("(name=Andrew)", 1); //Different class, same function
+  ```
+
 ## What's new? 
 
 ### Additions
 
-- **Dialogs**
-    - Added confirmation dialogs
-
-- **Keybinds**
-    - Added a static `addKeybind` method to add a keybind using a `Runnable` task instead
-      of the default `Action`.
+- **Stringutil package**
+  - `Separators`: Advanced `String.split` operations with literal or regex delimiters.
+  - `StringFormatter`: Manipulate String contents
+  - `StringNormaliser`: Format URL strings
 
 ### Changes
 
-- **Keybinds**
-    - Added an optional parameter to the `Keybind` constructor where you can specify
-      the keybind's condition.
+- **StringUtil**
+    - This class has been deprecated in favour of specialised classes (the new stringutil package) that offer better
+      maintainability and discoverability. Win win for everyone :).
+    - The class is supported as a facade until v5.0.0 after which it will be removed so I suggest a migration to the new
+      methods and classes.
 
 ---
 
@@ -123,8 +136,9 @@ Create and read configs with a simple and readable key:value pair format.
 
 ### String utilities
 
-- **Trim leading and/or trailing characters**
-- **Normalise URL strings**
+- **`StringFormatter`**: Character-level manipulations (e.g., trimming, formatting).
+- **`Separators`**: Advanced string splitting into `List` or `Set` (regex or literal).
+- **`StringNormaliser`**: Normalisation of URLs.
 
 ### Swing utilities
 

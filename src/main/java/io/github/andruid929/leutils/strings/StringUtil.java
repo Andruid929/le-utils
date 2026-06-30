@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import io.github.andruid929.leutils.stringutil.Separators;
+import io.github.andruid929.leutils.stringutil.StringFormatter;
+import io.github.andruid929.leutils.stringutil.StringNormaliser;
+
 /**
  * A utility class providing common string manipulation operations.
  *
@@ -21,8 +25,11 @@ import java.util.regex.Pattern;
  *
  * @author Andrew Jones
  * @since 3.2.0
+ * @deprecated This class has been deprecated since 4.4.0. Use {@link StringFormatter}, {@link Separators}
+ * and {@link StringNormaliser} instead.
  */
 
+@Deprecated
 public final class StringUtil {
 
     private StringUtil() {
@@ -34,22 +41,13 @@ public final class StringUtil {
      *
      * @param input non-null input string
      * @return trimmed input without the first and last characters, or the trimmed input if not applicable
+     * @deprecated Use {@link StringFormatter#trimCharacters(String)} instead.
+     *             Scheduled for removal in version 5.0.0.
      */
 
+    @Deprecated
     public static @NotNull String trimCharacters(@NotNull String input) {
-        String trimmedString = input.trim();
-
-        if (trimmedString.isBlank()) {
-            return trimmedString;
-        }
-
-        int lastCharacterIndex = getLastCharIndex(trimmedString);
-
-        if (lastCharacterIndex < 1) {
-            return trimmedString;
-        }
-
-        return trimmedString.substring(1, lastCharacterIndex);
+        return StringFormatter.trimCharacters(input);
     }
 
     /**
@@ -60,23 +58,13 @@ public final class StringUtil {
      * @param input       non-null input string
      * @param charsToTrim number of characters to remove from both ends
      * @return the trimmed-and-sliced substring, or the trimmed input if not applicable
+     * @deprecated Use {@link StringFormatter#trimCharacters(String, int)} instead.
+     *             Scheduled for removal in version 5.0.0.
      */
 
+    @Deprecated
     public static @NotNull String trimCharacters(@NotNull String input, int charsToTrim) {
-        String trimmedString = input.trim();
-
-        if (trimmedString.isBlank() || charsToTrim <= 0) {
-            return trimmedString;
-        }
-
-        int length = trimmedString.length();
-        int endIndex = length - charsToTrim;
-
-        if (charsToTrim >= endIndex) {
-            return trimmedString;
-        }
-
-        return trimmedString.substring(charsToTrim, endIndex);
+        return StringFormatter.trimCharacters(input, charsToTrim);
     }
 
     /**
@@ -88,29 +76,13 @@ public final class StringUtil {
      * @param startChars prefix to remove if present (Can be blank)
      * @param endChars   suffix to remove if present (Can be blank)
      * @return the trimmed-and-sliced substring if both prefix and suffix match; otherwise the trimmed input
+     * @deprecated Use {@link StringFormatter#trimCharacters(String, String, String)} instead.
+     *             Scheduled for removal in version 5.0.0.
      */
 
+    @Deprecated
     public static @NotNull String trimCharacters(@NotNull String input, @NotNull String startChars, @NotNull String endChars) {
-        String trimmedString = input.trim();
-
-        if (trimmedString.isBlank() || trimmedString.length() < 2
-                || (startChars.isBlank() && endChars.isBlank())) {
-            return trimmedString;
-        }
-
-        int length = trimmedString.length();
-
-        if (startChars.length() > length || endChars.length() > length) {
-            return trimmedString;
-        }
-
-        int lastValidIndex = length - endChars.length();
-
-        if (trimmedString.startsWith(startChars) && trimmedString.endsWith(endChars)) {
-            return trimmedString.substring(startChars.length(), lastValidIndex);
-        }
-
-        return trimmedString;
+        return StringFormatter.trimCharacters(input, startChars, endChars);
     }
 
     /**
@@ -121,22 +93,12 @@ public final class StringUtil {
      * @param firstChar expected first character
      * @param lastChar  expected last character
      * @return the trimmed-and-sliced substring or the trimmed input if not applicable
+     * @deprecated Use {@link StringFormatter#trimCharacters(String, char, char)} instead.
+     * Scheduled for removal in version 5.0.0.
      */
-
+    @Deprecated
     public static @NotNull String trimCharacters(@NotNull String input, char firstChar, char lastChar) {
-        String trimmedString = input.trim();
-
-        if (trimmedString.isBlank()) {
-            return trimmedString;
-        }
-
-        int lastCharacterIndex = trimmedString.length() - 1;
-
-        if (trimmedString.charAt(0) == firstChar && trimmedString.charAt(lastCharacterIndex) == lastChar) {
-            return trimmedString.substring(1, lastCharacterIndex);
-        }
-
-        return trimmedString;
+        return StringFormatter.trimCharacters(input, firstChar, lastChar);
     }
 
     /**
@@ -146,12 +108,13 @@ public final class StringUtil {
      * @param input          non-null input string
      * @param regexDelimiter a regex delimiter used by String#split
      * @return unmodifiable list of parts (possibly empty)
+     * @deprecated Use {@link Separators#separateAsList(String, String)} instead.
+     * Scheduled for removal in version 5.0.0.
      */
 
+    @Deprecated
     public static @NotNull @Unmodifiable List<String> separateAsList(@NotNull String input, String regexDelimiter) {
-        String[] array = input.split(regexDelimiter);
-
-        return List.of(array);
+        return Separators.separateAsList(input, regexDelimiter);
     }
 
     /**
@@ -160,12 +123,13 @@ public final class StringUtil {
      * @param input            non-null input string
      * @param literalDelimiter literal delimiter to split on
      * @return unmodifiable list of parts (possibly empty)
+     * @deprecated Use {@link Separators#literalSeparateAsList(String, String)} instead.
+     * Scheduled for removal in version 5.0.0.
      */
 
+    @Deprecated
     public static @NotNull @Unmodifiable List<String> literalSeparateAsList(@NotNull String input, String literalDelimiter) {
-        String[] array = input.split(Pattern.quote(literalDelimiter));
-
-        return List.of(array);
+        return Separators.literalSeparateAsList(input, literalDelimiter);
     }
 
     /**
@@ -175,12 +139,13 @@ public final class StringUtil {
      * @param input          non-null input string
      * @param regexDelimiter a regex delimiter used by String#split
      * @return unmodifiable set of parts (possibly empty)
+     * @deprecated Use {@link Separators#separateAsSet(String, String)} instead.
+     * Scheduled for removal in version 5.0.0.
      */
 
+    @Deprecated
     public static @NotNull @Unmodifiable Set<String> separateAsSet(@NotNull String input, String regexDelimiter) {
-        List<String> separated = separateAsList(input, regexDelimiter);
-
-        return Set.copyOf(separated);
+        return Separators.separateAsSet(input, regexDelimiter);
     }
 
     /**
@@ -189,12 +154,13 @@ public final class StringUtil {
      * @param input            non-null input string
      * @param literalDelimiter literal delimiter to split on
      * @return unmodifiable set of parts (possibly empty)
+     * @deprecated Use {@link Separators#literalSeparateAsSet(String, String)} instead.
+     * Scheduled for removal in version 5.0.0.
      */
 
+    @Deprecated
     public static @NotNull @Unmodifiable Set<String> literalSeparateAsSet(@NotNull String input, String literalDelimiter) {
-        List<String> separated = literalSeparateAsList(input, literalDelimiter);
-
-        return Set.copyOf(separated);
+        return Separators.literalSeparateAsSet(input, literalDelimiter);
     }
 
     /**
@@ -202,8 +168,11 @@ public final class StringUtil {
      *
      * @param input non-null input string
      * @return input.length() - 1, or -1 if input is empty
+     * @deprecated This method provides minimal value; use {@code input.length() - 1} instead.
+     * Scheduled for removal in version 5.0.0.
      */
 
+    @Deprecated
     @Contract(pure = true)
     public static int getLastCharIndex(@NotNull String input) {
         return input.length() - 1;
@@ -216,7 +185,10 @@ public final class StringUtil {
      * @param input non-null URL string to normalise
      * @param mode  space replacement strategy (e.g. %20 or hyphen)
      * @return normalised URL string
+     * @deprecated Use {@link StringNormaliser#normaliseUrl(String, StringNormaliser.SpaceMode)} instead.
+     * Scheduled for removal in version 5.0.0.
      */
+    @Deprecated
     public static @NotNull String normaliseUrl(@NotNull String input, @NotNull SpaceMode mode) {
         String trimmedUrl = input.trim();
 
@@ -226,7 +198,11 @@ public final class StringUtil {
 
     /**
      * Defines how spaces should be replaced in URL normalisation.
+     *
+     * @deprecated Use {@link StringNormaliser.SpaceMode} instead.
+     * Scheduled for removal in version 5.0.0.
      */
+    @Deprecated
     public enum SpaceMode {
 
         /**
@@ -239,12 +215,11 @@ public final class StringUtil {
          */
         HYPHEN("-");
 
-        private final String literalReplacement;
+        public final String literalReplacement;
 
         SpaceMode(String literalReplacement) {
             this.literalReplacement = literalReplacement;
         }
-
 
     }
 }

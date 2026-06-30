@@ -82,8 +82,6 @@ class StringFormatterTest {
         String input = "Hi, I am {} and it is {}℃ out";
 
         assertEquals("Hi, I am Andrew and it is 25℃ out", StringFormatter.interpolate(input, "Andrew", 25));
-<<<<<<< HEAD
-=======
         assertEquals("Hi, I am Andrew and it is 25℃ out", StringFormatter.interpolate(input, "Andrew", 25, "extra arg"));
         assertEquals("Hi, I am Andrew and it is {}℃ out", StringFormatter.interpolate(input, "Andrew"));
         assertEquals("Hi, I am {} and it is {}℃ out", StringFormatter.interpolate(input));
@@ -104,6 +102,5 @@ class StringFormatterTest {
         } finally {
             StringFormatter.setInterpolateFailsOnNull(true);
         }
->>>>>>> fcdf677 (WIP)
     }
 }

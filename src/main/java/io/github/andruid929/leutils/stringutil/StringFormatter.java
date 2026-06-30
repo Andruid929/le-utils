@@ -1,10 +1,8 @@
 package io.github.andruid929.leutils.stringutil;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.regex.Pattern;
 
-import io.github.andruid929.leutils.strings.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Utility class for character-level string manipulations such as trimming and slicing.
@@ -34,7 +32,7 @@ public final class StringFormatter {
             return trimmedString;
         }
 
-        int lastCharacterIndex = StringUtil.getLastCharIndex(trimmedString);
+        int lastCharacterIndex = trimmedString.length() - 1;
 
         if (lastCharacterIndex < 1) {
             return trimmedString;
@@ -130,10 +128,28 @@ public final class StringFormatter {
         return trimmedString;
     }
 
+    /**
+     * Configures whether interpolation should fail when any supplied argument is {@code null}.
+     *
+     * @param failsOnNull {@code true} to throw an exception on null values; {@code false} to
+     *                    substitute the literal {@code "null"} text instead
+     */
     public static void setInterpolateFailsOnNull(boolean failsOnNull) {
         interpolateFailsOnNull = failsOnNull;
     }
 
+    /**
+     * Replaces each placeholder token of {@code "{}"} in the template with the next supplied argument.
+     * If a supplied argument is {@code null} and fail-on-null mode is enabled, an
+     * {@link IllegalArgumentException} is thrown. If no arguments are provided, the original string is
+     * returned unchanged.
+     *
+     * @param s template string containing {@code "{}"} placeholders
+     * @param args values to insert into the template
+     * @return the interpolated string
+     * @throws IllegalArgumentException if a supplied argument is {@code null} and fail-on-null mode is enabled
+     * @see #setInterpolateFailsOnNull(boolean)
+     */
     public static String interpolate(@NotNull String s, Object ... args) {
         if (args.length == 0) {
             return s;
@@ -154,5 +170,30 @@ public final class StringFormatter {
         }
 
         return interpolatedString;
+    }
+
+    /**
+     * Convenience overload for interpolating a single value into a template.
+     *
+     * @param s template string containing {@code "{}"} placeholders
+     * @param arg value to insert into the template
+     * @return the interpolated string
+     * @see #interpolate(String, Object...)
+     */
+    public static String interpolate(@NotNull String s, Object arg) {
+        return interpolate(s, new Object[]{arg});
+    }
+
+    /**
+     * Convenience overload for interpolating two values into a template.
+     *
+     * @param s template string containing {@code "{}"} placeholders
+     * @param arg first value to insert into the template
+     * @param arg2 second value to insert into the template
+     * @return the interpolated string
+     * @see #interpolate(String, Object...)
+     */
+    public static String interpolate(@NotNull String s, Object arg, Object arg2) {
+        return interpolate(s, new Object[]{arg, arg2});
     }
 }

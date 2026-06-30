@@ -32,8 +32,12 @@ A lightweight Java utility library providing helpful functions for common repeti
 
 - **Stringutil package**
   - `Separators`: Advanced `String.split` operations with literal or regex delimiters.
-  - `StringFormatter`: Manipulate String contents
-  - `StringNormaliser`: Format URL strings
+  - `StringFormatter`: Manipulate string contents and interpolate `{}` placeholders in templates.
+  - `StringNormaliser`: Format URL strings.
+
+- **Config helpers**
+  - Added bulk import support with `Config.addFromMap(...)`.
+  - Added helpers to load persisted config files and inspect the currently loaded global config state.
 
 ### Changes
 
@@ -42,6 +46,10 @@ A lightweight Java utility library providing helpful functions for common repeti
       maintainability and discoverability. Win win for everyone :).
     - The class is supported as a facade until v5.0.0 after which it will be removed so I suggest a migration to the new
       methods and classes.
+
+- **Config**
+    - The configuration API now supports importing a full map at once, loading persisted config files, and reading the
+      global state that has been loaded into memory.
 
 ---
 
@@ -121,7 +129,7 @@ Task time calculation
     - Formatted string output with unit suffixes (e.g. "1.5MB")
     - Intentional `long` overflow wrap-around for performance and resilience
 
-### Formatting
+### NumberFormatting
 
 - **NumberFormatting**:
     - Format numbers with custom or default (2) decimal places
@@ -133,10 +141,11 @@ Create and read configs with a simple and readable key:value pair format.
 
 - Collect configs in a global configuration, persist it to any file of your choosing,
   read the configs with an immutable object with getters.
+- Import entire maps of key/value pairs, load persisted config files, and inspect the current global state.
 
 ### String utilities
 
-- **`StringFormatter`**: Character-level manipulations (e.g., trimming, formatting).
+- **`StringFormatter`**: Character-level manipulations (e.g., trimming, formatting) and template interpolation with `{}` placeholders.
 - **`Separators`**: Advanced string splitting into `List` or `Set` (regex or literal).
 - **`StringNormaliser`**: Normalisation of URLs.
 

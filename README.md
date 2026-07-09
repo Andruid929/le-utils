@@ -5,6 +5,8 @@ A lightweight Java utility library providing helpful functions for common repeti
 ---
 ## Table of contents
 
+- [Notice board](#notice-board-)
+  - [Deprecation notice](#deprecation-notice-)
 - [What's new](#whats-new-)
 - [Requirements](#requirements)
 - [Adding the library](#using-the-library)
@@ -30,22 +32,13 @@ A lightweight Java utility library providing helpful functions for common repeti
 
 ### Additions
 
-- **Stringutil package**
-  - `Separators`: Advanced `String.split` operations with literal or regex delimiters.
-  - `StringFormatter`: Manipulate string contents and interpolate `{}` placeholders in templates.
-  - `StringNormaliser`: Format URL strings.
+- `StringFormatter.interpolate()`
 
 - **Config helpers**
   - Added bulk import support with `Config.addFromMap(...)`.
   - Added helpers to load persisted config files and inspect the currently loaded global config state.
 
 ### Changes
-
-- **StringUtil**
-    - This class has been deprecated in favour of specialised classes (the new stringutil package) that offer better
-      maintainability and discoverability. Win win for everyone :).
-    - The class is supported as a facade until v5.0.0 after which it will be removed so I suggest a migration to the new
-      methods and classes.
 
 - **Config**
     - The configuration API now supports importing a full map at once, loading persisted config files, and reading the
@@ -74,7 +67,7 @@ In `pom.xml`:
 <dependency>
     <groupId>io.github.andruid929</groupId>
     <artifactId>le-utils</artifactId>
-    <version>${version}</version>
+    <version>4.4.0</version>
 </dependency>
 ```
 
@@ -83,7 +76,7 @@ In `pom.xml`:
 In `build.gradle`:
 
 ```groovy
-implementation 'io.github.andruid929:le-utils:${version}'
+implementation 'io.github.andruid929:le-utils:4.4.0'
 ```
 
 ---

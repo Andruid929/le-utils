@@ -5,9 +5,9 @@ A lightweight Java utility library providing helpful functions for common repeti
 ---
 ## Table of contents
 
-- [Notice board](#notice-board-)
-  - [Deprecation notice](#deprecation-notice-)
-- [What's new](#whats-new-)
+- [Notice board](#notice-board)
+  - [Deprecation notice](#deprecation-notice)
+- [What's new](#whats-new)
 - [Requirements](#requirements)
 - [Adding the library](#using-the-library)
   - [Maven](#maven)

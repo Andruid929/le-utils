@@ -1,11 +1,5 @@
 package io.github.andruid929.leutils.config;
 
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,11 +7,22 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import io.github.andruid929.leutils.strings.StringUtil;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
+import io.github.andruid929.leutils.stringutil.StringFormatter;
 
 /**
  * A utility class for managing configurations as key-value pairs. Configurations are represented
@@ -106,6 +111,23 @@ public final class Config {
     }
 
     /**
+     * Adds every entry from the supplied map into the global configuration store.
+     *
+     * @param keyValuePairs map of configuration keys to values to add
+     */
+    public static void addFromMap(@NotNull Map<String, String> keyValuePairs) {
+        if (keyValuePairs.isEmpty()) {
+            return;
+        }
+
+        for(String key : keyValuePairs.keySet()) {
+            String value = keyValuePairs.get(key);
+
+            add(key, value);
+        }
+    }
+
+    /**
      * Adds or replaces a global configuration entry with a string value.
      *
      * @param key   non-null configuration key
@@ -169,6 +191,17 @@ public final class Config {
     }
 
     /**
+     * Get a global loaded config.
+     *
+     * @param key the key for the desired config
+     * @return the value for the given key or null if the key is invalid
+     */
+
+    public static String get(@NotNull String key) {
+        return configs.get(key);
+    }
+
+    /**
      * Returns the number of entries in the global configuration map.
      *
      * @return the count of global configuration entries
@@ -183,6 +216,7 @@ public final class Config {
      * @param key configuration key
      * @return {@code true} if an entry was removed; {@code false} otherwise
      */
+
 
     public static boolean remove(String key) {
 
@@ -202,6 +236,28 @@ public final class Config {
      */
     public static void clear() {
         configs.clear();
+    }
+
+    /**
+     * Returns the mutable map backing the global configuration storage.
+     *
+     * @return current set of loaded global configuration entries
+     * @since 4.4.0
+     */
+    public static Map<String, String> getLoadedConfigs() {
+        return configs;
+    }
+
+    /**
+     * Loads configuration entries from a persisted file into the global configuration store.
+     *
+     * @param path path to a configuration file written using {@link #persistConfig(Path, boolean)}
+     * @throws IOException if the file cannot be read
+     */
+    public static void loadSavedChanges(@NotNull Path path) throws IOException {
+        Config savedConfig = readConfig(path);
+
+        addFromMap(savedConfig.getAllSavedConfigs());
     }
 
     /**
@@ -272,6 +328,15 @@ public final class Config {
 
             return new Config(configLines);
         }
+    }
+
+    /**
+     * Returns the immutable map backing this configuration instance.
+     *
+     * @return parsed key-value pairs for this instance
+     */
+    public Map<String, String> getAllSavedConfigs() {
+        return keyValueConfigs;
     }
 
     /**
@@ -410,7 +475,7 @@ public final class Config {
             return new String[]{};
         }
 
-        String csvString = StringUtil.trimCharacters(value, '[', ']');
+        String csvString = StringFormatter.trimCharacters(value, '[', ']');
 
         if (csvString.isBlank()) {
             return new String[]{};

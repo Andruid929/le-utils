@@ -1,8 +1,10 @@
 target/
 !.mvn/wrapper/maven-wrapper.jar
+dependency-reduced-pom.xml
 
 ### IntelliJ IDEA ###
 .idea/
+.junie/
 *.iws
 *.iml
 *.ipr
@@ -30,6 +32,15 @@ build/
 ### Mac OS ###
 .DS_Store
 
-*.temp
+### Vim ###
 *.swp
 *~
+
+### Logger ###
+*gz
+*DEFINED
+
+### Andrew ###
+*.temp
+*.noversion
+

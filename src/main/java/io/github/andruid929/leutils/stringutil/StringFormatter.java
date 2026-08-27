@@ -203,6 +203,15 @@ public final class StringFormatter {
         return interpolate(s, new Object[]{arg, arg2});
     }
 
+    /**
+     * Replaces all occurrences of the placeholder {@code {}} with a single value.
+     *
+     * @param s the string to interpolate
+     * @param arg the value to replace all placeholders with
+     * @return the interpolated string
+     * @throws IllegalArgumentException if {@code interpolateFailsOnNull} is true and arg is null
+     * @see #interpolate(String, Object...)
+     */
     public static @NotNull String interpolateAll(@NotNull String s, Object arg) {
         if (s.isBlank()) return s;
 

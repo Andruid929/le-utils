@@ -1,12 +1,13 @@
 package io.github.andruid929.leutils.wora;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 
 /**
  * Utility class for resolving paths specific to an operating system.
- * This supports Windows, Mac and Linux. For example, the {@link #USER_HOME field}
+ * This supports Windows, Mac and Linux. For example, the {@link #USER_HOME} field
  * will return {@code C:\Users\Username} on Windows and {@code /home/username/} on Linux.
  *
  * @author Andrew Jones
@@ -42,7 +43,8 @@ public class PathFinder {
      * @return the Path to the OS documents folder
      */
 
-    public static Path getDocumentsFolder() {
+    @Contract(pure = true)
+    public static @NotNull Path getDocumentsFolder() {
         return Path.of(USER_HOME, "Documents");
     }
 
@@ -52,7 +54,7 @@ public class PathFinder {
      * @return the Path to the OS app data folder
      */
 
-    public static Path getAppDataFolder() {
+    public static @NotNull Path getAppDataFolder() {
         String os = System.getProperty("os.name").toLowerCase();
 
         if (os.contains("win")) {

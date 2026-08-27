@@ -42,7 +42,7 @@ public final class StringUtil {
      * @param input non-null input string
      * @return trimmed input without the first and last characters, or the trimmed input if not applicable
      * @deprecated Use {@link StringFormatter#trimCharacters(String)} instead.
-     *             Scheduled for removal in version 5.0.0.
+     * Scheduled for removal in version 5.0.0.
      */
 
     @Deprecated
@@ -59,7 +59,7 @@ public final class StringUtil {
      * @param charsToTrim number of characters to remove from both ends
      * @return the trimmed-and-sliced substring, or the trimmed input if not applicable
      * @deprecated Use {@link StringFormatter#trimCharacters(String, int)} instead.
-     *             Scheduled for removal in version 5.0.0.
+     * Scheduled for removal in version 5.0.0.
      */
 
     @Deprecated
@@ -77,7 +77,7 @@ public final class StringUtil {
      * @param endChars   suffix to remove if present (Can be blank)
      * @return the trimmed-and-sliced substring if both prefix and suffix match; otherwise the trimmed input
      * @deprecated Use {@link StringFormatter#trimCharacters(String, String, String)} instead.
-     *             Scheduled for removal in version 5.0.0.
+     * Scheduled for removal in version 5.0.0.
      */
 
     @Deprecated

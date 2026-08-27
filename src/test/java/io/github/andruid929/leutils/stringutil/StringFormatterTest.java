@@ -103,4 +103,11 @@ class StringFormatterTest {
             StringFormatter.setInterpolateFailsOnNull(true);
         }
     }
+
+    @Test
+    void interpolateAllTest() {
+        String value = "The {} is hot, so is the {} as the {} is {}y";
+
+        assertEquals("The roof is hot, so is the roof as the roof is roofy", StringFormatter.interpolateAll(value, "roof"));
+    }
 }

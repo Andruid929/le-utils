@@ -1,5 +1,11 @@
 package io.github.andruid929.leutils.config;
 
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,20 +13,9 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import io.github.andruid929.leutils.stringutil.StringFormatter;
 
@@ -120,7 +115,7 @@ public final class Config {
             return;
         }
 
-        for(String key : keyValuePairs.keySet()) {
+        for (String key : keyValuePairs.keySet()) {
             String value = keyValuePairs.get(key);
 
             add(key, value);

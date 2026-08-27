@@ -2,6 +2,7 @@ package io.github.andruid929.leutils.wora;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -10,6 +11,7 @@ import java.nio.file.Path;
 public class PathFinderTest {
 
     @Test
+    @DisplayName("Get documents folder path")
     void testDocuments() {
         String documents = System.getProperty("user.home") + File.separator + "Documents";
 

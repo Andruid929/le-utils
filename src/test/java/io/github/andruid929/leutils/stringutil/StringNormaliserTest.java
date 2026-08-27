@@ -2,11 +2,13 @@ package io.github.andruid929.leutils.stringutil;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class StringNormaliserTest {
 
     @Test
+    @DisplayName("Normalize URL with different space handling modes")
     void normaliseUrl() {
         String invalidUrl = " https:\\\\github.com\\Andruid929/le utils ";
 

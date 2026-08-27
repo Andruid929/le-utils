@@ -2,6 +2,7 @@ package io.github.andruid929.leutils.config;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -21,15 +22,14 @@ class ConfigTest {
             "Christian:true",
             "MINOR:2.0",
             "PATCH:0",
-            "False"
+            "False",
+            "# This is a comment"
     );
 
     private final Config TEST_CONFIG = new Config(SAMPLE_CONFIG_LINES);
 
-    /*
-     * Reads config lines, collects
-     * */
     @Test
+    @DisplayName("Read config lines and parse different data types")
     void readConfigLines() {
         assertEquals("le-utils:3.2.0", TEST_CONFIG.getString("artifact"));
         assertEquals(3L, TEST_CONFIG.getLong("MAJOR"));
@@ -41,11 +41,11 @@ class ConfigTest {
         assertArrayEquals(new String[]{"11", "21", "25"}, TEST_CONFIG.getArray("JDK versions"));
         assertArrayEquals(new int[]{11, 21, 25}, TEST_CONFIG.getIntArray("JDK versions"));
 
-        // The provided file contains only valid lines; the invalid configs list should be empty
         assertEquals(1, TEST_CONFIG.getInvalidConfigs().size());
     }
 
     @Test
+    @DisplayName("Getter methods throw or return null for missing keys")
     void gettersThrowOnMissingKeys() {
         assertNull(TEST_CONFIG.getString("missing"));
 
@@ -60,6 +60,7 @@ class ConfigTest {
     }
 
     @Test
+    @DisplayName("Get config sizes")
     void sizes() {
         Config.add("1", 1);
         Config.add("2", 2);
@@ -72,6 +73,7 @@ class ConfigTest {
     }
 
     @Test
+    @DisplayName("Remove config entry")
     void remove() {
         Config.add("1", 1);
         Config.add("2", 2);
@@ -84,6 +86,7 @@ class ConfigTest {
     }
 
     @Test
+    @DisplayName("Character getter throws on empty value")
     void characterThrowsOnEmptyValue() {
         Config cfg = new Config(List.of("empty:"));
 
@@ -91,6 +94,7 @@ class ConfigTest {
     }
 
     @Test
+    @DisplayName("Parse config array values")
     void testConfigArrayParsing() {
         Config cfg = new Config(List.of(
                 "A:[a, b, c]",
@@ -112,6 +116,7 @@ class ConfigTest {
     }
 
     @Test
+    @DisplayName("Throw NumberFormatException for invalid number formats")
     void throwsNumberFormatException() {
         Config cfg = new Config(List.of(
                 "i:notAnInt",
@@ -129,6 +134,7 @@ class ConfigTest {
     }
 
     @Test
+    @DisplayName("Identify valid and invalid config entries")
     void testValidAndInvalidConfigs() {
         Config cfg = new Config(List.of(
                 "valid:1",
@@ -149,6 +155,7 @@ class ConfigTest {
     }
 
     @Test
+    @DisplayName("Persist and read config to/from file")
     void testConfigPersistence(@TempDir Path tempDir) throws IOException {
         // Prepare global map
         Config.clear();
@@ -170,5 +177,20 @@ class ConfigTest {
 
         // Clean up static map
         Config.clear();
+    }
+
+    @Test
+    @DisplayName("Handle comments and empty lines in config")
+    void testCommentsAndEmptyLines() {
+        List<String> lines = List.of(
+                "# Distro:Fedora", //Comment
+                "Version:44", //Valid
+                "   # PackageManager:dnf", //Comment after trim
+                "      "); //Empty line
+
+        Config config = new Config(lines);
+
+        assertEquals(1, config.size());
+        assertTrue(config.getInvalidConfigs().isEmpty());
     }
 }

@@ -4,11 +4,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class ErrorMessageHandlerTest {
 
     @Test
+    @DisplayName("Get simple error message from exception")
     void simpleErrorMessageTest() {
         String errorMessage = ErrorMessageHandler.simpleErrorMessage(new NullPointerException());
 
@@ -16,6 +18,7 @@ class ErrorMessageHandlerTest {
     }
 
     @Test
+    @DisplayName("Get stack trace without message")
     void getStackTraceTest() {
         Exception e = new RuntimeException("Test exception");
         String stackTrace = ErrorMessageHandler.getStackTrace(e);
@@ -27,6 +30,7 @@ class ErrorMessageHandlerTest {
     }
 
     @Test
+    @DisplayName("Get stack trace with exception message included")
     void getStackTraceWithIncludeMessageTest() {
         Exception e = new RuntimeException("Test exception");
 
@@ -39,6 +43,7 @@ class ErrorMessageHandlerTest {
     }
 
     @Test
+    @DisplayName("Get stack trace from throwable with message")
     void getStackTraceWithThrowableTest() {
         Throwable t = new Throwable("Test throwable");
         String stackTrace = ErrorMessageHandler.getStackTrace(t, true);
@@ -49,6 +54,7 @@ class ErrorMessageHandlerTest {
     }
 
     @Test
+    @DisplayName("Get simple error message from exception with message")
     void simpleErrorMessageTest1() {
         String errorMessage = ErrorMessageHandler.simpleErrorMessage(new NullPointerException("Value is null"));
 
@@ -56,6 +62,7 @@ class ErrorMessageHandlerTest {
     }
 
     @Test
+    @DisplayName("Trace root cause of wrapped exceptions")
     void throwableRootTracer() {
         Error e = throwsError();
 
@@ -72,12 +79,14 @@ class ErrorMessageHandlerTest {
     }
 
     @Test
+    @DisplayName("Root tracer returns same exception when no cause")
     void rootTracerWithNoCause() {
         Exception simple = new Exception("Simple error");
         assertEquals(simple, ErrorMessageHandler.throwableRootTracer(simple));
     }
 
     @Test
+    @DisplayName("Root message tracer returns empty string for null message")
     void rootMessageTracerWithNullMessage() {
         Exception rootWithoutMessage = new Exception();
         Exception wrapped = new Exception(rootWithoutMessage);
@@ -86,6 +95,7 @@ class ErrorMessageHandlerTest {
     }
 
     @Test
+    @DisplayName("Trace root cause through multiple exception levels")
     void rootTracerMultipleLevels() {
         NumberFormatException nfe = new NumberFormatException("NFE");
         IllegalStateException ise = new IllegalStateException(nfe);

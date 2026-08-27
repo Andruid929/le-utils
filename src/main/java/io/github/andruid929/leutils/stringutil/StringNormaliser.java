@@ -1,8 +1,8 @@
 package io.github.andruid929.leutils.stringutil;
 
-import java.util.regex.Pattern;
-
 import org.jetbrains.annotations.NotNull;
+
+import java.util.regex.Pattern;
 
 /**
  * Utility class for string normalisation tasks, such as URL formatting.
@@ -12,7 +12,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class StringNormaliser {
 
-    private StringNormaliser() {}
+    private StringNormaliser() {
+    }
 
     /**
      * Normalises a URL by trimming whitespace, replacing spaces according to the specified mode,

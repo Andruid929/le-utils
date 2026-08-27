@@ -3,6 +3,7 @@ package io.github.andruid929.leutils.stringutil;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 class StringFormatterTest {
 
     @Test
+    @DisplayName("Trim basic characters from string")
     void trimCharactersBasic() {
         String input = "&Le-utils;";
 
@@ -21,6 +23,7 @@ class StringFormatterTest {
     }
 
     @Test
+    @DisplayName("Trim characters with whitespace normalization")
     void trimCharactersWhitespaceNormalisation() {
         String input = "   [abc]   ";
 
@@ -35,6 +38,7 @@ class StringFormatterTest {
     }
 
     @Test
+    @DisplayName("Trim single character and empty strings")
     void trimCharactersSingleCharAndEmpty() {
         assertEquals("", StringFormatter.trimCharacters("  "));     // blank stays blank
         assertEquals("a", StringFormatter.trimCharacters(" a "));   // single char unchanged after normalisation
@@ -43,6 +47,7 @@ class StringFormatterTest {
     }
 
     @Test
+    @DisplayName("Protect against over-trimming")
     void trimCharactersOverTrimProtection() {
         String input = "  abcd  ";
 
@@ -57,6 +62,7 @@ class StringFormatterTest {
     }
 
     @Test
+    @DisplayName("Trim characters with different start and end patterns")
     void trimCharactersStartEndVariants() {
         String input = "([{Le-utils}])";
 
@@ -78,6 +84,7 @@ class StringFormatterTest {
     }
 
     @Test
+    @DisplayName("Interpolate values into format string")
     void interpolateTest() {
         String input = "Hi, I am {} and it is {}℃ out";
 
@@ -102,5 +109,13 @@ class StringFormatterTest {
         } finally {
             StringFormatter.setInterpolateFailsOnNull(true);
         }
+    }
+
+    @Test
+    @DisplayName("Interpolate all placeholders with same value")
+    void interpolateAllTest() {
+        String value = "The {} is hot, so is the {} as the {} is {}y";
+
+        assertEquals("The roof is hot, so is the roof as the roof is roofy", StringFormatter.interpolateAll(value, "roof"));
     }
 }

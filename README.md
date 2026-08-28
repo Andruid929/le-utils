@@ -1,4 +1,4 @@
-# Le Utils v4.4.0
+# Le Utils v5.0
 
 A lightweight Java utility library providing helpful functions for common repetitive tasks.
 
@@ -6,8 +6,7 @@ A lightweight Java utility library providing helpful functions for common repeti
 ## Table of contents
 
 - [Notice board](#notice-board)
-  - [Deprecation notice](#deprecation-notice)
-- [What's new](#whats-new)
+- [What's new](#whats-new-)
 - [Requirements](#requirements)
 - [Adding the library](#using-the-library)
   - [Maven](#maven)
@@ -17,32 +16,39 @@ A lightweight Java utility library providing helpful functions for common repeti
 
 ## Notice board
 
-### Deprecation notice
+### Breaking change
+- `Config.readConfig(Path)` will now throw an `IOException` if the specified path is a folder or
+  the file does not exist. See [additions](#additions) for more info on the flag.
 
-**_[Strings package](src/main/java/io/github/andruid929/leutils/strings)_**
-- [StringUtil](src/main/java/io/github/andruid929/leutils/strings/StringUtil.java) class is deprecated and will be removed in v5.0.0
-- Class functions have been moved to the [stringutil](src/main/java/io/github/andruid929/leutils/stringutil) package
-- New usage:
-  ```java
-  //Instead of StringUtil.trimCharacters("(name=Andrew), 1";
-  StringFormatter.trimCharacters("(name=Andrew)", 1); //Different class, same function
-  ```
-
-## What's new? 
+## What's new?
 
 ### Additions
 
-- `StringFormatter.interpolate()`
+- **[StringFormatter](src/main/java/io/github/andruid929/leutils/stringutil/StringFormatter.java)**
+  - `interpolateAll()` to replace all placeholders with a single value.
 
-- **Config helpers**
-  - Added bulk import support with `Config.addFromMap(...)`.
-  - Added helpers to load persisted config files and inspect the currently loaded global config state.
+- **[Config](src/main/java/io/github/andruid929/leutils/config/Config.java)**
+  - `failOnMissingFile` flag that decides whether an exception is thrown when `readConfig()`
+    cannot find the path specified (or if the path points to a folder). This flag will stop the Config
+    from returning empty values which would then overwrite the persisted values on the next write. On by default,
+    can be enabled/disabled by calling the new static `setFailOnMissingFile(boolean)`... disable it at your own risk.
+  - Lines that start with `#` will be treated as comments and won't be picked up as invalid lines
 
 ### Changes
 
-- **Config**
-    - The configuration API now supports importing a full map at once, loading persisted config files, and reading the
-      global state that has been loaded into memory.
+- `StringFormatter.interpolate()` now uses a `StringBuilder` instead of multiple regex calls better
+  performance
+
+### Removals
+
+- As promised in past deprecation notices, the `strings` package (io.github.andruid929.leutils.strings) has been removed
+  because everything, within the one class that was there, was moved to the
+  [stringutil](src/main/java/io/github/andruid929/leutils/stringutil) package.
+
+### Bug fixes
+- Empty lines are no longer collected by [Config](src/main/java/io/github/andruid929/leutils/config/Config.java) as
+  invalid lines
+- `StringFormatter.interpolate()` now operates on literals instead of the mixed regex and literal logic before
 
 ---
 
@@ -67,7 +73,7 @@ In `pom.xml`:
 <dependency>
     <groupId>io.github.andruid929</groupId>
     <artifactId>le-utils</artifactId>
-    <version>4.4.0</version>
+    <version>5.0.0</version>
 </dependency>
 ```
 
@@ -76,7 +82,7 @@ In `pom.xml`:
 In `build.gradle`:
 
 ```groovy
-implementation 'io.github.andruid929:le-utils:4.4.0'
+implementation 'io.github.andruid929:le-utils:5.5.0'
 ```
 
 ---
@@ -132,9 +138,21 @@ Task time calculation
 
 Create and read configs with a simple and readable key:value pair format.
 
-- Collect configs in a global configuration, persist it to any file of your choosing,
-  read the configs with an immutable object with getters.
-- Import entire maps of key/value pairs, load persisted config files, and inspect the current global state.
+- **Global configuration management**:
+  - Add/remove/clear configuration entries with support for various data types (String, Number, boolean, arrays, char)
+  - Inspect current global state with `getLoadedConfigs()` and `numberOfConfigs()`
+  - Import entire maps of key/value pairs with `addFromMap()`
+
+- **Persistence**:
+  - Persist global configuration to file with `persistConfig()` (sorted keys for stable diffs)
+  - Load persisted configs with `readConfig()` or `loadSavedChanges()`
+  - Control behavior on missing files with `setFailOnMissingFile()` flag (throws exception by default)
+
+- **Immutable instance-level views**:
+  - Create immutable `Config` objects from configuration file lines
+  - Parse values as various types: String, int, long, float, double, boolean, char, arrays
+  - Auto-skip comment lines (starting with `#`) and empty lines
+  - Inspect invalid configuration lines with `getInvalidConfigs()`
 
 ### String utilities
 
@@ -161,6 +179,18 @@ Create and read configs with a simple and readable key:value pair format.
 
 - Find the root cause of nested exceptions with their messages
 
-### Unix/Windows path handler
+### PathFinder - Unix/Windows/Mac path handler
 
-- Get OS specific paths
+Get OS-specific paths for common directories (Windows, Mac, Linux):
+
+- **Quick access paths**:
+  - User home directory via `USER_HOME` constant
+  - Documents folder via `DOCUMENTS_FOLDER` constant or `getDocumentsFolder()`
+  - App data folder via `APPDATA_FOLDER` constant or `getAppDataFolder()`
+    - Windows: `%APPDATA%`
+    - Mac: `~/Library/Application Support`
+    - Linux: `~/.config`
+
+- **Path construction**:
+  - `getUserFolder(String)` - Get a single folder from user home
+  - `createPathFromHomeRoot(String...)` - Build paths extending from user home (e.g., `.m2/repository`)

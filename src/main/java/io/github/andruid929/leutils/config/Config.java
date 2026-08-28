@@ -1,26 +1,21 @@
 package io.github.andruid929.leutils.config;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import static io.github.andruid929.leutils.stringutil.StringFormatter.interpolate;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import io.github.andruid929.leutils.stringutil.StringFormatter;
 
@@ -54,7 +49,7 @@ import io.github.andruid929.leutils.stringutil.StringFormatter;
  * <p>Persistence format:
  * each entry is written as {@code key:value} per line, with keys sorted lexicographically for stable diffs.</p>
  *
- * @author Andrew
+ * @author Andrew Jones
  * @since 3.2.0
  */
 
@@ -66,6 +61,14 @@ public final class Config {
      */
 
     static final Map<String, String> configs = new ConcurrentHashMap<>();
+
+    /**
+     * Global flag controlling behavior when reading a missing configuration file.
+     * When {@code true}, {@link NoSuchFileException} is thrown; when {@code false}, an empty configuration is returned.
+     *
+     * @since 5.0.0
+     */
+    private static boolean failOnMissingFile = true;
 
     /**
      * Immutable key-value map backing instance getters.
@@ -93,7 +96,19 @@ public final class Config {
 
         List<String> invalids = new ArrayList<>();
 
+        if (configsList.isEmpty()) {
+            keyValueConfigs = Collections.emptyMap();
+
+            invalidConfigs = Collections.emptyList();
+
+            return;
+        }
+
         for (String config : configsList) {
+            if (config.isBlank() || config.trim().startsWith("#")) {
+                continue;
+            }
+
             String[] keyAndValue = config.trim().split(":", 2);
 
             if (keyAndValue.length != 2) {
@@ -111,6 +126,32 @@ public final class Config {
     }
 
     /**
+     * Builds an empty immutable configuration instance with no entries.
+     * Used internally when reading fails and {@link #failOnMissingFile} is {@code false}.
+     *
+     * @since 5.0.0
+     */
+
+    private Config() {
+        keyValueConfigs = Collections.emptyMap();
+
+        invalidConfigs = Collections.emptyList();
+    }
+
+    /**
+     * Sets the global behavior for handling missing configuration files during read operations.
+     * When {@code true} (default), reading a missing file throws {@link NoSuchFileException}.
+     * When {@code false}, an empty configuration is returned silently.
+     *
+     * @param failOnMissingFile {@code true} to throw on missing files; {@code false} to return empty config
+     * @see #readConfig(Path)
+     * @since 5.0.0
+     */
+    public static void setFailOnMissingFile(boolean failOnMissingFile) {
+        Config.failOnMissingFile = failOnMissingFile;
+    }
+
+    /**
      * Adds every entry from the supplied map into the global configuration store.
      *
      * @param keyValuePairs map of configuration keys to values to add
@@ -120,7 +161,7 @@ public final class Config {
             return;
         }
 
-        for(String key : keyValuePairs.keySet()) {
+        for (String key : keyValuePairs.keySet()) {
             String value = keyValuePairs.get(key);
 
             add(key, value);
@@ -129,9 +170,10 @@ public final class Config {
 
     /**
      * Adds or replaces a global configuration entry with a string value.
+     * If an entry with the same key already exists, it is replaced.
      *
      * @param key   non-null configuration key
-     * @param value value to store; may be {@code null}
+     * @param value value to store; may be {@code null} for a null entry
      */
 
     public static void add(@NotNull String key, String value) {
@@ -243,6 +285,7 @@ public final class Config {
      *
      * @return current set of loaded global configuration entries
      * @since 4.4.0
+     * @see #addFromMap(Map)
      */
     public static Map<String, String> getLoadedConfigs() {
         return configs;
@@ -253,6 +296,7 @@ public final class Config {
      *
      * @param path path to a configuration file written using {@link #persistConfig(Path, boolean)}
      * @throws IOException if the file cannot be read
+     * @since 5.0.0
      */
     public static void loadSavedChanges(@NotNull Path path) throws IOException {
         Config savedConfig = readConfig(path);
@@ -297,37 +341,46 @@ public final class Config {
         try (OutputStream outStream = Files.newOutputStream(savePath, CREATE, TRUNCATE_EXISTING);
              BufferedOutputStream stream = new BufferedOutputStream(outStream)) {
 
-            stream.write(configsString.getBytes(StandardCharsets.UTF_8));
+            stream.write(configsString.getBytes());
         }
     }
 
     /**
      * Reads configuration lines from a file and returns an immutable {@link Config} instance
      * built from those lines. Each file line is treated as a raw entry and parsed as
-     * {@code key:value} during construction. Missing files yield an empty configuration.
+     * {@code key:value} during construction. Missing files yield an empty configuration when
+     * {@link #failOnMissingFile} is set to false.
      *
      * @param configPath path to the configuration file
      * @return an immutable {@link Config} built from the file contents
-     * @throws IOException if an I/O error occurs while reading
+     * @throws IOException if {@code configPath} is a folder, doesn't exist or an I/O error occurs while reading
+     * @see #setFailOnMissingFile(boolean)
+     * @apiNote The default fail behaviour is to prevent data loss when the configs are overwritten by an
+     * empty configuration. Disable at your own risk.
      */
 
-    public static @NotNull Config readConfig(Path configPath) throws IOException {
+    public static @NotNull Config readConfig(@NotNull Path configPath) throws IOException {
         if (Files.notExists(configPath)) {
-            return new Config(new ArrayList<>());
-        }
 
-        try (BufferedReader reader = Files.newBufferedReader(configPath, StandardCharsets.UTF_8)) {
-
-            List<String> configLines = new ArrayList<>();
-
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                configLines.add(line);
+            if (failOnMissingFile) {
+                throw new NoSuchFileException(configPath.toString());
             }
 
-            return new Config(configLines);
+            return new Config();
         }
+
+        if (Files.isDirectory(configPath)) {
+
+            if (failOnMissingFile) {
+                throw new IOException(interpolate("Expected config file, got folder \"{}\""));
+            }
+
+            return new Config();
+        }
+
+        List<String> lines = Files.readAllLines(configPath);
+
+        return new Config(lines);
     }
 
     /**

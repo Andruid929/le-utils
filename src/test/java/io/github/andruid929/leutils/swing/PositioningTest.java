@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
@@ -21,6 +22,7 @@ class PositioningTest implements Positioning {
     }
 
     @Test
+    @DisplayName("Position component under target panel")
     void testPositionUnder() {
         assertThrows(IllegalStateException.class, () -> this.positionUnder(new JPanel(), 0));
 
@@ -37,6 +39,7 @@ class PositioningTest implements Positioning {
     }
 
     @Test
+    @DisplayName("Position component next to target panel")
     void testPositionNextTo() {
         assertThrows(IllegalStateException.class, () -> this.positionNextTo(new JPanel(), 0));
 

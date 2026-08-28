@@ -2,11 +2,13 @@ package io.github.andruid929.leutils.swing;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class DialogsTest {
 
     @Test
+    @DisplayName("Set error dialog name")
     void setErrorDialogName() {
         Dialogs.setErrorDialogName("123");
 
@@ -14,6 +16,7 @@ class DialogsTest {
     }
 
     @Test
+    @DisplayName("Get error dialog name with default fallback")
     void getErrorDialogName() {
         Dialogs.setErrorDialogName("123");
 
@@ -25,6 +28,7 @@ class DialogsTest {
     }
 
     @Test
+    @DisplayName("Set warning dialog name")
     void setWarningDialogName() {
         Dialogs.setWarningDialogName("123");
 
@@ -32,6 +36,7 @@ class DialogsTest {
     }
 
     @Test
+    @DisplayName("Get warning dialog name with default fallback")
     void getWarningDialogName() {
         Dialogs.setWarningDialogName("123");
 
@@ -43,6 +48,7 @@ class DialogsTest {
     }
 
     @Test
+    @DisplayName("Set info dialog name")
     void setInfoDialogName() {
         Dialogs.setInfoDialogName("123");
 
@@ -50,6 +56,7 @@ class DialogsTest {
     }
 
     @Test
+    @DisplayName("Get confirmation dialog name with default fallback")
     void getConfirmationDialogName() {
         Dialogs.setConfirmationDialogName("123");
 
@@ -61,6 +68,7 @@ class DialogsTest {
     }
 
     @Test
+    @DisplayName("Get info dialog name with default fallback")
     void getInfoDialogName() {
         Dialogs.setInfoDialogName("123");
 
@@ -72,6 +80,7 @@ class DialogsTest {
     }
 
     @Test
+    @DisplayName("Set confirmation dialog name")
     void setConfirmationDialogName() {
         Dialogs.setConfirmationDialogName("123");
 

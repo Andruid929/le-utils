@@ -2,11 +2,13 @@ package io.github.andruid929.leutils.data;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class DataUnitConversionTest {
 
     @Test
+    @DisplayName("Calculate long value data unit conversions")
     void calculateLong() {
         assertEquals(1024L, DataUnitConversion.calculate(1L, DataUnit.KILOBYTE, DataUnit.BYTE));
         assertEquals(1L, DataUnitConversion.calculate(1024L, DataUnit.KILOBYTE, DataUnit.MEGABYTE));
@@ -16,6 +18,7 @@ class DataUnitConversionTest {
     }
 
     @Test
+    @DisplayName("Calculate double value data unit conversions")
     void calculateDouble() {
         assertEquals(1024.0, DataUnitConversion.calculate(1.0, DataUnit.KILOBYTE, DataUnit.BYTE));
         assertEquals(0.5, DataUnitConversion.calculate(512.0, DataUnit.KILOBYTE, DataUnit.MEGABYTE));
@@ -25,6 +28,7 @@ class DataUnitConversionTest {
     }
 
     @Test
+    @DisplayName("Calculate as double for long inputs")
     void calculateAsDouble() {
         assertEquals(1024.0, DataUnitConversion.calculateAsDouble(1L, DataUnit.KILOBYTE, DataUnit.BYTE));
         assertEquals(0.5, DataUnitConversion.calculateAsDouble(512L, DataUnit.KILOBYTE, DataUnit.MEGABYTE));
@@ -34,12 +38,14 @@ class DataUnitConversionTest {
     }
 
     @Test
+    @DisplayName("Format long value with unit")
     void formatWithUnitLong() {
         assertEquals("1,024B", DataUnitConversion.formatWithUnit(1L, DataUnit.KILOBYTE, DataUnit.BYTE));
         assertEquals("1MB", DataUnitConversion.formatWithUnit(1024L, DataUnit.KILOBYTE, DataUnit.MEGABYTE));
     }
 
     @Test
+    @DisplayName("Format double value with unit and optional rounding")
     void formatWithUnitDouble() {
         // Without rounding
         assertEquals("1024.0B", DataUnitConversion.formatWithUnit(1.0, DataUnit.KILOBYTE, DataUnit.BYTE));
@@ -57,6 +63,7 @@ class DataUnitConversionTest {
     }
 
     @Test
+    @DisplayName("Overflow possible with very large data unit conversions")
     void overflowPossible() {
         // 9,000 PB to Byte will overflow Long.MAX_VALUE
         // 1 PB = 2^50 bytes = 1,125,899,906,842,624 bytes

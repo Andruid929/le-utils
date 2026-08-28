@@ -3,11 +3,13 @@ package io.github.andruid929.leutils.data;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class DataUnitTest {
 
     @Test
+    @DisplayName("Convert long values between data units")
     void convertTo() {
         assertEquals(2048, DataUnit.GIGABYTE.convertTo(2, DataUnit.MEGABYTE));
         assertEquals(4, DataUnit.GIGABYTE.convertTo(4096, DataUnit.TERABYTE));
@@ -16,6 +18,7 @@ class DataUnitTest {
     }
 
     @Test
+    @DisplayName("Convert double values between data units")
     void convertToDouble() {
         assertEquals(2048.0, DataUnit.GIGABYTE.convertTo(2.0, DataUnit.MEGABYTE));
         assertEquals(0.5, DataUnit.GIGABYTE.convertTo(512.0, DataUnit.TERABYTE));
@@ -24,6 +27,7 @@ class DataUnitTest {
     }
 
     @Test
+    @DisplayName("Get unit suffix for data unit")
     void getUnitSuffix() {
         assertEquals("B", DataUnit.BYTE.getUnitSuffix());
         assertEquals("KB", DataUnit.KILOBYTE.getUnitSuffix());
@@ -34,6 +38,7 @@ class DataUnitTest {
     }
 
     @Test
+    @DisplayName("Get number of bytes for data unit")
     void getNumberOfBytes() {
         assertEquals(1L, DataUnit.BYTE.getNumberOfBytes());
         assertEquals(1024L, DataUnit.KILOBYTE.getNumberOfBytes());
@@ -44,6 +49,7 @@ class DataUnitTest {
     }
 
     @Test
+    @DisplayName("Get name of data unit")
     void getName() {
         assertEquals("Byte", DataUnit.BYTE.getName());
         assertEquals("Kilobyte", DataUnit.KILOBYTE.getName());
@@ -54,6 +60,7 @@ class DataUnitTest {
     }
 
     @Test
+    @DisplayName("Get all data unit values and lookup by name")
     void values() {
         assertEquals(6, DataUnit.values().length);
         assertNotNull(DataUnit.valueOf("BYTE"));

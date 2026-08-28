@@ -1,7 +1,5 @@
 package io.github.andruid929.leutils.stringutil;
 
-import java.util.regex.Pattern;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -144,56 +142,86 @@ public final class StringFormatter {
      * {@link IllegalArgumentException} is thrown. If no arguments are provided, the original string is
      * returned unchanged.
      *
-     * @param s template string containing {@code "{}"} placeholders
+     * @param s    template string containing {@code "{}"} placeholders
      * @param args values to insert into the template
      * @return the interpolated string
      * @throws IllegalArgumentException if a supplied argument is {@code null} and fail-on-null mode is enabled
      * @see #setInterpolateFailsOnNull(boolean)
      */
-    public static String interpolate(@NotNull String s, Object ... args) {
-        if (args.length == 0) {
-            return s;
-        }
+    public static @NotNull String interpolate(@NotNull String s, Object @NotNull ... args) {
+        if (s.isBlank() || args.length == 0) return s;
 
-        String interpolatedString = s;
+        StringBuilder sb = new StringBuilder();
+        int lastIndex = 0;
+        int argIndex = 0;
 
-        for (Object arg : args) {
+        while (argIndex < args.length) {
+            int index = s.indexOf("{}", lastIndex);
+
+            if (index == -1) break;
+
+            sb.append(s, lastIndex, index);
+
+            Object arg = args[argIndex++];
+
             if (arg == null && interpolateFailsOnNull) {
                 throw new IllegalArgumentException("Interpolation failed due to null argument");
             }
 
-            if (arg == null) {
-                interpolatedString = interpolatedString.replaceFirst(Pattern.quote("{}"), "null");
-            } else {
-                interpolatedString = interpolatedString.replaceFirst(Pattern.quote("{}"), arg.toString());
-            }
+            sb.append(arg == null ? "null" : arg.toString());
+
+            lastIndex = index + 2;
         }
 
-        return interpolatedString;
+        sb.append(s.substring(lastIndex));
+
+        return sb.toString();
     }
 
     /**
      * Convenience overload for interpolating a single value into a template.
      *
-     * @param s template string containing {@code "{}"} placeholders
+     * @param s   template string containing {@code "{}"} placeholders
      * @param arg value to insert into the template
      * @return the interpolated string
      * @see #interpolate(String, Object...)
      */
-    public static String interpolate(@NotNull String s, Object arg) {
+    public static @NotNull String interpolate(@NotNull String s, Object arg) {
         return interpolate(s, new Object[]{arg});
     }
 
     /**
      * Convenience overload for interpolating two values into a template.
      *
-     * @param s template string containing {@code "{}"} placeholders
-     * @param arg first value to insert into the template
+     * @param s    template string containing {@code "{}"} placeholders
+     * @param arg  first value to insert into the template
      * @param arg2 second value to insert into the template
      * @return the interpolated string
      * @see #interpolate(String, Object...)
      */
-    public static String interpolate(@NotNull String s, Object arg, Object arg2) {
+    public static @NotNull String interpolate(@NotNull String s, Object arg, Object arg2) {
         return interpolate(s, new Object[]{arg, arg2});
+    }
+
+    /**
+     * Replaces all occurrences of the placeholder {@code {}} with a single value.
+     *
+     * @param s the string to interpolate
+     * @param arg the value to replace all placeholders with
+     * @return the interpolated string
+     * @throws IllegalArgumentException if {@code interpolateFailsOnNull} is true and arg is null
+     * @see #interpolate(String, Object...)
+     */
+    public static @NotNull String interpolateAll(@NotNull String s, Object arg) {
+        if (s.isBlank()) return s;
+
+        if (interpolateFailsOnNull && arg == null) {
+            throw new IllegalArgumentException("Interpolation failed due to null argument");
+
+        } else {
+            String replacement = (arg == null) ? "null" : arg.toString();
+
+            return s.replace("{}", replacement);
+        }
     }
 }

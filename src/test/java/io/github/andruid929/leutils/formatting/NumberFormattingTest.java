@@ -3,11 +3,13 @@ package io.github.andruid929.leutils.formatting;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class NumberFormattingTest {
 
     @Test
+    @DisplayName("Build number format pattern with decimal places")
     void formatPatternBuilder() {
         assertEquals("#,###", NumberFormatting.formatterPatternBuilder(0));
         assertEquals("#,###.#", NumberFormatting.formatterPatternBuilder(1));
@@ -18,6 +20,7 @@ class NumberFormattingTest {
     }
 
     @Test
+    @DisplayName("Format number with thousand separators and decimal places")
     void formatNumber() {
         assertEquals("1,234.57", NumberFormatting.formatNumber(1234.5678));
         assertEquals("1,234", NumberFormatting.formatNumber(1234));
@@ -26,6 +29,7 @@ class NumberFormattingTest {
     }
 
     @Test
+    @DisplayName("Format whole number with thousand separators")
     void formatWholeNumber() {
         assertEquals("1,234", NumberFormatting.formatWholeNumber(1234L));
         assertEquals("1,234,567", NumberFormatting.formatWholeNumber(1234567));
@@ -34,6 +38,7 @@ class NumberFormattingTest {
     }
 
     @Test
+    @DisplayName("Format number with custom decimal places")
     void formatter() {
         assertEquals("1,234.568", NumberFormatting.formatter(1234.5678, 3));
         assertEquals("1,234.6", NumberFormatting.formatter(1234.5678, 1));
@@ -42,6 +47,7 @@ class NumberFormattingTest {
     }
 
     @Test
+    @DisplayName("Format percentage from string value")
     void formatPercentage() {
         assertEquals("100.00%", NumberFormatting.percentage("100"));
         assertEquals("97.00%", NumberFormatting.percentage("96.99999"));
@@ -50,6 +56,7 @@ class NumberFormattingTest {
     }
 
     @Test
+    @DisplayName("Format percentage from decimal value")
     void formatPercentageDecimal() {
         assertEquals("100.00%", NumberFormatting.percentageDecimal("1"));
         assertEquals("97.00%", NumberFormatting.percentageDecimal("0.9699999"));

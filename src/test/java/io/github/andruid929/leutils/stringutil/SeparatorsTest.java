@@ -2,6 +2,7 @@ package io.github.andruid929.leutils.stringutil;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import io.github.andruid929.leutils.stringutil.Separators;
 class SeparatorsTest {
 
     @Test
+    @DisplayName("Separate string as list and set with regex delimiter")
     void separateAsListAndSetWithRegexDelimiter() {
         String input = "io.github.andruid929io:le-utils:le-utils:3.2.0";
 
@@ -27,6 +29,7 @@ class SeparatorsTest {
     }
 
     @Test
+    @DisplayName("Separate with literal delimiter does not treat regex")
     void separateLiteralDelimiterDoesNotTreatRegex() {
         String input = "a.b.c";
 

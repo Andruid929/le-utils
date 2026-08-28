@@ -24,7 +24,9 @@ jobs:
 
       - name: Import GPG key
         run: |
-          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+          mkdir -p ~/.gnupg
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import --yes
+          gpg --list-secret-keys --keyid-format SHORT
 
       - name: Publish to Maven Central
         env:
@@ -38,11 +40,7 @@ jobs:
             -Dgpg.passphrase="${{ secrets.GPG_PASSPHRASE }}"
 
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false

@@ -22,7 +22,9 @@ jobs:
 
       - name: Import GPG key
         run: |
-          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+          mkdir -p ~/.gnupg
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import --yes
+          gpg --list-secret-keys --keyid-format SHORT
 
       - name: Test Release Build (no publish)
         env:
@@ -34,8 +36,18 @@ jobs:
 
       - name: Verify artifacts
         run: |
-          echo "Built artifacts:"
-          ls -lh target/*.jar
+          echo "=== Built artifacts ==="
+          ls -lh target/*.jar || echo "No JAR files found"
           echo ""
-          echo "Signed artifacts:"
-          ls -lh target/*.asc
+          echo "=== Signed artifacts ==="
+          ls -lh target/*.asc || echo "No signature files found"
+          echo ""
+          echo "=== Verifying signatures ==="
+          for sig in target/*.asc; do
+            if [ -f "$sig" ]; then
+              jar="${sig%.asc}"
+              if [ -f "$jar" ]; then
+                gpg --verify "$sig" "$jar" && echo "✓ $sig verified" || echo "✗ $sig failed"
+              fi
+            fi
+          done

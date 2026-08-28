@@ -1,0 +1,41 @@
+name: Test Release Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Import GPG key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+
+      - name: Test Release Build (no publish)
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          mvn clean package -P release \
+            -DskipTests \
+            -Dgpg.passphrase="${{ secrets.GPG_PASSPHRASE }}"
+
+      - name: Verify artifacts
+        run: |
+          echo "Built artifacts:"
+          ls -lh target/*.jar
+          echo ""
+          echo "Signed artifacts:"
+          ls -lh target/*.asc

@@ -1,0 +1,48 @@
+name: Publish to Maven Central
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Import GPG key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+
+      - name: Publish to Maven Central
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          mvn clean deploy -P release \
+            -DskipTests \
+            --settings=settings.xml \
+            -Dgpg.passphrase="${{ secrets.GPG_PASSPHRASE }}"
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false

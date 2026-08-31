@@ -1,0 +1,53 @@
+name: Test Release Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Import GPG key
+        run: |
+          mkdir -p ~/.gnupg
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import --yes
+          gpg --list-secret-keys --keyid-format SHORT
+
+      - name: Test Release Build (no publish)
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          mvn clean package -P release \
+            -DskipTests \
+            -Dgpg.passphrase="${{ secrets.GPG_PASSPHRASE }}"
+
+      - name: Verify artifacts
+        run: |
+          echo "=== Built artifacts ==="
+          ls -lh target/*.jar || echo "No JAR files found"
+          echo ""
+          echo "=== Signed artifacts ==="
+          ls -lh target/*.asc || echo "No signature files found"
+          echo ""
+          echo "=== Verifying signatures ==="
+          for sig in target/*.asc; do
+            if [ -f "$sig" ]; then
+              jar="${sig%.asc}"
+              if [ -f "$jar" ]; then
+                gpg --verify "$sig" "$jar" && echo "✓ $sig verified" || echo "✗ $sig failed"
+              fi
+            fi
+          done

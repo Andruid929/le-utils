@@ -6,7 +6,7 @@
 
     <groupId>io.github.andruid929</groupId>
     <artifactId>le-utils</artifactId>
-    <version>5.0.0</version>
+    <version>5.1.0</version>
 
     <properties>
         <jdk.version>11</jdk.version>
@@ -55,6 +55,24 @@
     </dependencies>
 
     <build>
+        <resources>
+            <!-- Only the version file is filtered, so ${...} in any other resource is left as written -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>io/github/andruid929/leutils/version.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>io/github/andruid929/leutils/version.properties</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

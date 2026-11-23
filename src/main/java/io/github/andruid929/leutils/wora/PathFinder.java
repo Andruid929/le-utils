@@ -8,7 +8,7 @@ import java.nio.file.Path;
 /**
  * Utility class for resolving paths specific to an operating system.
  * This supports Windows, Mac and Linux. For example, the {@link #USER_HOME} field
- * will return {@code C:\Users\Username} on Windows and {@code /home/username/} on Linux.
+ * will return {@code C:\Users\<Username>} on Windows and {@code /home/<username>/} on Linux.
  *
  * @author Andrew Jones
  * @since 4.2.0
@@ -56,26 +56,56 @@ public class PathFinder {
     }
 
     /**
-     * Get the path to the appdata folder
+     * Get the path to the appdata folder. On Windows this is the {@code APPDATA} folder, or
+     * {@code AppData\Roaming} in the user's home directory if that variable is not set. On macOS it is
+     * {@code Library/Application Support} and on any other operating system {@code .config}, both in the
+     * user's home directory
      *
-     * @return the Path to the OS app data folder
+     * @return the Path to the operating system's app data folder
      * @since 4.2.0
      */
 
     public static @NotNull Path getAppDataFolder() {
-        String os = System.getProperty("os.name").toLowerCase();
+        if (OperatingSystem.isWindows()) {
+            String appdataDir = System.getenv("APPDATA");
 
-        if (os.contains("win")) {
-            String appDataPath = System.getenv("APPDATA");
+            if (appdataDir == null || appdataDir.isBlank()) {
+                return Path.of(USER_HOME, "AppData", "Roaming");
 
-            return Path.of(appDataPath);
+            } else {
+                return Path.of(appdataDir);
+            }
 
-        } else if (os.contains("mac")) {
+        } else if (OperatingSystem.isMacOS()) {
             return Path.of(USER_HOME, "Library", "Application Support");
 
         } else {
             return Path.of(USER_HOME, ".config");
         }
+    }
+
+    /**
+     * Get the path to the local (non-roaming) app data folder. On Windows this is the {@code LOCALAPPDATA}
+     * folder, or {@code AppData\Local} in the user's home directory if that variable is not set. Other
+     * operating systems have no separate local folder, so this is the same as {@link #getAppDataFolder()}
+     *
+     * @return the Path to the operating system's local app data folder
+     * @since 5.1.0
+     */
+
+    public static @NotNull Path getLocalAppDataFolder() {
+        if (OperatingSystem.isWindows()) {
+            String localAppDataDir = System.getenv("LOCALAPPDATA");
+
+            if (localAppDataDir == null || localAppDataDir.isBlank()) {
+                return Path.of(USER_HOME, "AppData", "Local");
+
+            } else {
+                return Path.of(localAppDataDir);
+            }
+        }
+
+        return getAppDataFolder();
     }
 
     /**
@@ -94,9 +124,9 @@ public class PathFinder {
 
     /**
      * This method creates a path extending from {@link #USER_HOME}.
-     * Usage example: {@code Path.createFromHomeRoot(".m2", "repository")}
-     * will return {@code /home/username/.m2/repository} on Linux and
-     * {@code C:\Users\Username\.m2\repository}.
+     * Usage example: {@code PathFinder.createFromHomeRoot(".m2", "repository")}
+     * will return {@code /home/<username>/.m2/repository} on Linux and
+     * {@code C:\Users\<Username>\.m2\repository}.
      *
      * @param directories the folders to be added to the path in order
      * @return a path of the specified folders extending from the user's {@link #USER_HOME home directory}

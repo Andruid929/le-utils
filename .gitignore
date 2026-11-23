@@ -1,49 +1,111 @@
+# Build & Dependencies
+
+## Common
+# Kept above the tool sections, since a later rule wins and their exceptions (the wrapper jars) must come after these
+*.class
+classes/
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+
+## Maven
 target/
 !.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 dependency-reduced-pom.xml
 
-### IntelliJ IDEA ###
-.idea/
-.junie/
-*.iws
-*.iml
-*.ipr
+## Gradle
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
 
-### Eclipse ###
+# IDEs
+
+## IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+*.un~
+
+## Eclipse
 .apt_generated
 .classpath
+.classpath~
 .factorypath
 .project
 .settings
 .springBeans
 .sts4-cache
 
-### NetBeans ###
+## NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### VS Code ###
+## VS Code
 .vscode/
 
-### Mac OS ###
+# Java Runtime & Logs
+*.log
+*.log.*
+logs/
+hs_err_pid*.log
+hs_err_*.log
+replay_pid*.log
+replay_*.log
+*.hprof
+*.jfr
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+settings.xml
+
+# OS-specific
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-### Vim ###
+# Editor Temp Files
 *.swp
+*.swo
 *~
+*.tmp
 
-### Logger ###
-*gz
-*DEFINED
+# Language-specific
+.kotlin
 
-### Andrew ###
+# Custom (Andrew's)
+
+## AI agents
+.junie/
+CLAUDE.md
+AGENTS.md
+
+## Placeholders and drafts
 *.temp
 *.noversion
 Testing.java
+*UNDEFINED
 
+# Project-specific (customize per project)

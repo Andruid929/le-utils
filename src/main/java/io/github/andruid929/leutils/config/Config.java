@@ -38,7 +38,9 @@ import io.github.andruid929.leutils.stringutil.StringFormatter;
  *
  * <p>Parsing behavior and errors:
  * <ul>
- *   <li>Missing keys in getters that parse values throw {@link NoSuchElementException} with the key name.</li>
+ *   <li>Missing keys in getters that parse values throw {@link NoSuchElementException} with the key name.
+ *       Every getter also has an overload taking a default value, which is returned instead when the key
+ *       is missing. A value that is present but malformed still throws.</li>
  *   <li>Malformed numeric values throw {@link NumberFormatException} as per the underlying parser.</li>
  *   <li>{@link #getCharacter(String)} throws {@link IllegalArgumentException} if the value is empty.</li>
  *   <li>{@link #getArray(String)} trims whitespace, accepts bracketed CSV forms like {@code [a, b, c]},
@@ -155,6 +157,7 @@ public final class Config {
      * Adds every entry from the supplied map into the global configuration store.
      *
      * @param keyValuePairs map of configuration keys to values to add
+     * @throws IllegalArgumentException if any value is {@code null}. Entries added before it are kept.
      */
     public static void addFromMap(@NotNull Map<String, String> keyValuePairs) {
         if (keyValuePairs.isEmpty()) {
@@ -173,10 +176,15 @@ public final class Config {
      * If an entry with the same key already exists, it is replaced.
      *
      * @param key   non-null configuration key
-     * @param value value to store; may be {@code null} for a null entry
+     * @param value non-null value to store
+     * @throws IllegalArgumentException if {@code value} is {@code null}
      */
 
     public static void add(@NotNull String key, String value) {
+        if (value == null) {
+            throw new IllegalArgumentException("Null values not accepted");
+        }
+
         configs.put(key, value);
     }
 
@@ -241,6 +249,21 @@ public final class Config {
 
     public static String get(@NotNull String key) {
         return configs.get(key);
+    }
+
+    /**
+     * Get a global loaded config, or a default if there is none.
+     *
+     * @param key          the key for the desired config
+     * @param defaultValue the value to return if the key is missing
+     * @return the value for the given key, or {@code defaultValue} if the key is missing
+     * @since 5.1.0
+     */
+
+    public static String get(@NotNull String key, String defaultValue) {
+        String value = configs.get(key);
+
+        return (value == null) ? defaultValue : value;
     }
 
     /**
@@ -372,7 +395,7 @@ public final class Config {
         if (Files.isDirectory(configPath)) {
 
             if (failOnMissingFile) {
-                throw new IOException(interpolate("Expected config file, got folder \"{}\""));
+                throw new IOException(interpolate("Expected config file, got folder \"{}\"", configPath));
             }
 
             return new Config();
@@ -415,6 +438,22 @@ public final class Config {
     }
 
     /**
+     * Retrieves the raw string value for a key, or {@code defaultValue} if absent.
+     * An empty value ({@code key:}) is present, so it is returned as an empty string rather than the default.
+     *
+     * @param key          configuration key
+     * @param defaultValue the value to return if the key is missing
+     * @return the stored string, or {@code defaultValue} if not found
+     * @since 5.1.0
+     */
+
+    public String getString(String key, String defaultValue) {
+        String value = keyValueConfigs.get(key);
+
+        return (value == null) ? defaultValue : value;
+    }
+
+    /**
      * Parses the value for {@code key} as an {@code int}.
      *
      * @param key configuration key
@@ -425,6 +464,27 @@ public final class Config {
 
     public int getInteger(String key) {
         String value = checkForValue(key);
+
+        return Integer.parseInt(value);
+    }
+
+    /**
+     * Parses the value for {@code key} as an {@code int}, or returns {@code defaultValue} if the key is missing.
+     * The default is only used when the key is missing; a value that is present but not a valid integer still throws.
+     *
+     * @param key          configuration key
+     * @param defaultValue the value to return if the key is missing
+     * @return parsed int value, or {@code defaultValue} if the key is missing
+     * @throws NumberFormatException if the value is not a valid integer
+     * @since 5.1.0
+     */
+
+    public int getInteger(String key, int defaultValue) {
+        String value = getString(key);
+
+        if (value == null) {
+            return defaultValue;
+        }
 
         return Integer.parseInt(value);
     }
@@ -445,6 +505,27 @@ public final class Config {
     }
 
     /**
+     * Parses the value for {@code key} as a {@code long}, or returns {@code defaultValue} if the key is missing.
+     * The default is only used when the key is missing; a value that is present but not a valid long still throws.
+     *
+     * @param key          configuration key
+     * @param defaultValue the value to return if the key is missing
+     * @return parsed long value, or {@code defaultValue} if the key is missing
+     * @throws NumberFormatException if the value is not a valid long
+     * @since 5.1.0
+     */
+
+    public long getLong(String key, long defaultValue) {
+        String value = getString(key);
+
+        if (value == null) {
+            return defaultValue;
+        }
+
+        return Long.parseLong(value);
+    }
+
+    /**
      * Parses the value for {@code key} as a {@code boolean} using {@link Boolean#parseBoolean(String)}.
      * Returns {@code true} only if the value equals (ignoring case) {@code "true"}.
      *
@@ -455,6 +536,27 @@ public final class Config {
 
     public boolean getBoolean(String key) {
         String value = checkForValue(key);
+
+        return Boolean.parseBoolean(value);
+    }
+
+    /**
+     * Parses the value for {@code key} as a {@code boolean} using {@link Boolean#parseBoolean(String)},
+     * or returns {@code defaultValue} if the key is missing. Any value other than {@code "true"} (ignoring case)
+     * is {@code false}, so a value that is present never falls back to the default.
+     *
+     * @param key          configuration key
+     * @param defaultValue the value to return if the key is missing
+     * @return parsed boolean value, or {@code defaultValue} if the key is missing
+     * @since 5.1.0
+     */
+
+    public boolean getBoolean(String key, boolean defaultValue) {
+        String value = getString(key);
+
+        if (value == null) {
+            return defaultValue;
+        }
 
         return Boolean.parseBoolean(value);
     }
@@ -475,6 +577,27 @@ public final class Config {
     }
 
     /**
+     * Parses the value for {@code key} as a {@code float}, or returns {@code defaultValue} if the key is missing.
+     * The default is only used when the key is missing; a value that is present but not a valid float still throws.
+     *
+     * @param key          configuration key
+     * @param defaultValue the value to return if the key is missing
+     * @return parsed float value, or {@code defaultValue} if the key is missing
+     * @throws NumberFormatException if the value is not a valid float
+     * @since 5.1.0
+     */
+
+    public float getFloat(String key, float defaultValue) {
+        String value = getString(key);
+
+        if (value == null) {
+            return defaultValue;
+        }
+
+        return Float.parseFloat(value);
+    }
+
+    /**
      * Parses the value for {@code key} as a {@code double}.
      *
      * @param key configuration key
@@ -485,6 +608,27 @@ public final class Config {
 
     public double getDouble(String key) {
         String value = checkForValue(key);
+
+        return Double.parseDouble(value);
+    }
+
+    /**
+     * Parses the value for {@code key} as a {@code double}, or returns {@code defaultValue} if the key is missing.
+     * The default is only used when the key is missing; a value that is present but not a valid double still throws.
+     *
+     * @param key          configuration key
+     * @param defaultValue the value to return if the key is missing
+     * @return parsed double value, or {@code defaultValue} if the key is missing
+     * @throws NumberFormatException if the value is not a valid double
+     * @since 5.1.0
+     */
+
+    public double getDouble(String key, double defaultValue) {
+        String value = getString(key);
+
+        if (value == null) {
+            return defaultValue;
+        }
 
         return Double.parseDouble(value);
     }
@@ -509,6 +653,31 @@ public final class Config {
     }
 
     /**
+     * Returns the first character of the string value for {@code key}, or {@code defaultValue} if the key is missing.
+     * The default is only used when the key is missing; a value that is present but empty still throws.
+     *
+     * @param key          configuration key
+     * @param defaultValue the value to return if the key is missing
+     * @return first character of the stored string, or {@code defaultValue} if the key is missing
+     * @throws IllegalArgumentException if the stored string is empty
+     * @since 5.1.0
+     */
+
+    public char getCharacter(String key, char defaultValue) {
+        String s = getString(key);
+
+        if (s == null) {
+            return defaultValue;
+        }
+
+        if (s.isEmpty()) {
+            throw new IllegalArgumentException("Empty value for key: " + key);
+        }
+
+        return s.charAt(0);
+    }
+
+    /**
      * Parses the value for {@code key} as a string array. Expected formats include a
      * comma-separated sequence such as {@code [a, b, c]} or {@code [a,b,c]}
      * and a regular comma-separated sequence like {@code a, b, c}.
@@ -522,6 +691,31 @@ public final class Config {
     public String @NotNull [] getArray(String key) {
         String raw = checkForValue(key);
 
+        return processArray(raw);
+    }
+
+    /**
+     * Parses the value for {@code key} as a string array in the same formats as {@link #getArray(String)},
+     * or returns {@code defaultValue} if the key is missing. A blank or {@code []} value is present,
+     * so it yields an empty array rather than the default.
+     *
+     * @param key          configuration key
+     * @param defaultValue non-null array to return, as is, if the key is missing
+     * @return array of string elements, or {@code defaultValue} if the key is missing; never {@code null}
+     * @since 5.1.0
+     */
+
+    public String @NotNull [] getArray(String key, String @NotNull [] defaultValue) {
+        String raw = getString(key);
+
+        if (raw == null) {
+            return defaultValue;
+        }
+
+        return processArray(raw);
+    }
+
+    private String @NotNull [] processArray(@NotNull String raw) {
         String value = raw.replaceAll("\\s+", "");
 
         if (value.isBlank()) {
@@ -554,6 +748,32 @@ public final class Config {
     public int @NotNull [] getIntArray(String key) {
         String[] strings = getArray(key);
 
+        return parseInts(strings);
+    }
+
+    /**
+     * Parses the value for {@code key} as an array of {@code int} in the same formats as
+     * {@link #getIntArray(String)}, or returns {@code defaultValue} if the key is missing.
+     * A blank or {@code []} value is present, so it yields an empty array rather than the default.
+     *
+     * @param key          configuration key
+     * @param defaultValue non-null array to return, as is, if the key is missing
+     * @return array of ints, or {@code defaultValue} if the key is missing; never {@code null}
+     * @throws NumberFormatException if any element is not a valid integer
+     * @since 5.1.0
+     */
+
+    public int @NotNull [] getIntArray(String key, int @NotNull [] defaultValue) {
+        String raw = getString(key);
+
+        if (raw == null) {
+            return defaultValue;
+        }
+
+        return parseInts(processArray(raw));
+    }
+
+    private int @NotNull [] parseInts(String @NotNull [] strings) {
         int arrayLength = strings.length;
 
         if (arrayLength == 0) {

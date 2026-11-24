@@ -9,11 +9,14 @@ import org.junit.jupiter.api.Test;
 
 import java.time.ZoneId;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 class TimeUtilTest {
 
     private static TimeZone originalTimeZone;
+
+    private static Locale originalFormatLocale;
 
     private final TimeUtil time = new TimeUtil() {
         @Override
@@ -22,17 +25,21 @@ class TimeUtilTest {
         }
     };
 
-    // The methods without a ZoneId use the system's time zone, so pin it to the one the expected values are written in
+    // The methods without a ZoneId use the system's time zone, and month names follow the default format locale, so
+    // pin both to what the expected values are written in
     @BeforeAll
-    static void pinTimeZone() {
+    static void pinTimeZoneAndLocale() {
         originalTimeZone = TimeZone.getDefault();
+        originalFormatLocale = Locale.getDefault(Locale.Category.FORMAT);
 
         TimeZone.setDefault(TimeZone.getTimeZone("GMT+2"));
+        Locale.setDefault(Locale.Category.FORMAT, Locale.ENGLISH);
     }
 
     @AfterAll
-    static void restoreTimeZone() {
+    static void restoreTimeZoneAndLocale() {
         TimeZone.setDefault(originalTimeZone);
+        Locale.setDefault(Locale.Category.FORMAT, originalFormatLocale);
     }
 
     @Test

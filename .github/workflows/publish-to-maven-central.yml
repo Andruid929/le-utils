@@ -1,27 +1,45 @@
 name: Publish to Maven Central
 
+# Pushing a tag like v5.2.0 signs the library, uploads it to Maven Central and creates a GitHub release. Central holds
+# the upload until it's published by hand in the Central Portal.
+# Running it by hand (Actions tab -> Run workflow) builds, tests and signs the same files without uploading or
+# releasing anything, so it can check a release before tagging.
 on:
   push:
     tags:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   publish:
+    name: Build and publish
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
+
+      # A Central version can never be replaced, so a tag that disagrees with the pom must stop before the upload
+      - name: Check the tag matches the pom version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          pom_version="$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
+          tag_version="${GITHUB_REF_NAME#v}"
+
+          if [ "$pom_version" != "$tag_version" ]; then
+            echo "The pom is at version $pom_version but the tag says $tag_version" >&2
+            exit 1
+          fi
 
       - name: Import GPG key
         run: |
@@ -29,7 +47,17 @@ jobs:
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import --yes
           gpg --list-secret-keys --keyid-format SHORT
 
+      - name: Build, test and sign without publishing
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          mvn clean verify -P release \
+            --settings=settings.xml \
+            -Dgpg.passphrase="${{ secrets.GPG_PASSPHRASE }}"
+
       - name: Publish to Maven Central
+        if: startsWith(github.ref, 'refs/tags/v')
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
@@ -40,13 +68,40 @@ jobs:
             --settings=settings.xml \
             -Dgpg.passphrase="${{ secrets.GPG_PASSPHRASE }}"
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+      # Handed to the release job, which can write to the repo but never sees the signing key or Central credentials
+      - name: Keep the signed jars for the release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v7
         with:
-          name: ${{ github.ref_name }}
-          generate_release_notes: true
-          draft: false
-          prerelease: false
-          files: |
+          name: release-files
+          path: |
             target/*.jar
             target/*.asc
+          if-no-files-found: error
+
+  release:
+    name: Create GitHub release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write #Needed to create the release
+
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: release-files
+          path: dist
+
+      # --notes is shown above the generated notes. Linking the changelog at the tag keeps it showing this release's
+      # version
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHANGELOG_URL: https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/CHANGELOG.md
+        run: >
+          gh release create "$GITHUB_REF_NAME" dist/*
+          --repo "$GITHUB_REPOSITORY"
+          --title "$GITHUB_REF_NAME"
+          --notes "See the [changelog]($CHANGELOG_URL) for everything that changed in this release, including any breaking changes."
+          --generate-notes

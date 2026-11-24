@@ -2,13 +2,18 @@ package io.github.andruid929.leutils.time;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZoneId;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 class TimeUtilTest {
+
+    private static TimeZone originalTimeZone;
 
     private final TimeUtil time = new TimeUtil() {
         @Override
@@ -16,6 +21,19 @@ class TimeUtilTest {
             return 1_116_671_460_000L;
         }
     };
+
+    // The methods without a ZoneId use the system's time zone, so pin it to the one the expected values are written in
+    @BeforeAll
+    static void pinTimeZone() {
+        originalTimeZone = TimeZone.getDefault();
+
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT+2"));
+    }
+
+    @AfterAll
+    static void restoreTimeZone() {
+        TimeZone.setDefault(originalTimeZone);
+    }
 
     @Test
     @DisplayName("Get epoch second from millis")

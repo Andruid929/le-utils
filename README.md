@@ -1,7 +1,6 @@
 # Le Utils
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.andruid929/le-utils)](https://central.sonatype.com/artifact/io.github.andruid929/le-utils)
-[![Javadoc](https://javadoc.io/badge2/io.github.andruid929/le-utils/javadoc.svg)](https://javadoc.io/doc/io.github.andruid929/le-utils)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A lightweight Java utility library providing helpful functions for common repetitive tasks.
